@@ -1,0 +1,7 @@
+Debug/*
+Release/*
+.settings/*
+.project
+.cssproject
+.cproject
+.launches/*
