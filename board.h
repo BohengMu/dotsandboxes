@@ -14,8 +14,8 @@
 #include <stdlib.h>
 
 
-void clearBoard();
-void printBoard();
+void clear_board();
+void print_board();
 
 
 

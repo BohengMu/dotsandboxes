@@ -12,19 +12,20 @@ extern int g_b_in_game;
  * main.c
  */
 void main(void) {
-	WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
-	clearBoard();
-	  printBoard();
-	  hoverMove(g_current_x, g_current_y);
-	  printBoard();
-	  while (g_b_in_game) {
-	    char move = getConsoleInput();
-	    if (move == '\n')
-	      continue;
-	    moveHover(move);
-	    printBoard();
-	    printf("X: %i, Y: %i\n", g_current_x, g_current_y);
-	  }
-	  return 0;
+    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
+    clear_board();
+    print_board();
+    init_players();
+    hover_move(g_current_x, g_current_y);
+    print_board();
+    while (g_b_in_game) {
+    char move = get_console_input();
+    if (move == '\n')
+      continue;
+    move_hover(move);
+    print_board();
+    printf("X: %i, Y: %i\n", g_current_x, g_current_y);
+    }
+    return;
 }
 //end of file

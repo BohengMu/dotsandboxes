@@ -13,41 +13,54 @@
 
 int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
 
-char vedges[4] = {' ', '-', '^', 'x'};
-char hedges[4] = {' ', '|', '>', 'x'};
+char verticle_edges[4] = {' ', '-', '^', 'x'};
+char horizontal_edges[4] = {' ', '|', '>', 'x'};
 char dots[3] = {'.', ' ', 'o'};
 char boxes[5] = {' ', '1', '2', 'x', 'x'};
 
-
-void clearBoard() {
+/*
+ * Reconfigure the board to all zeros
+ */
+void clear_board() {
   int i, j;
-  for (i = 0; i < 2 * ROWS + 1; i++) {
-    for (j = 0; j < 2 * COLUMNS + 1; j++) {
+  for (i = 0; i < 2 * ROWS + 1; i++)
+  {
+    for (j = 0; j < 2 * COLUMNS + 1; j++)
+    {
         g_board[i][j] = 0;
     }
   }
 }
 
-void printBoard() {
+
+/*
+ * Print the current board
+ */
+void print_board() {
   printf("--------------boad of size %i x %i--------------\n", ROWS, COLUMNS);
-  int i, j;
-  for (i = 0; i < 2 * ROWS; i += 2) {
+  int row, column;
+  for (row = 0; row < 2 * ROWS; row += 2)
+  {
     char dotrow[2 * COLUMNS + 2];
     char boxrow[2 * COLUMNS + 2];
     dotrow[2 * COLUMNS + 1] = '\0';
     boxrow[2 * COLUMNS + 1] = '\0';
-    for (j = 0; j < 2 * COLUMNS + 1; j++) {
-      dotrow[j] = (j % 2 == 0) ? dots[g_board[i][j]] : vedges[g_board[i][j]];
-      boxrow[j] =
-          (j % 2 == 0) ? hedges[g_board[i + 1][j]] : boxes[g_board[i + 1][j]];
+    for (column = 0; column < 2 * COLUMNS + 1; column++) {
+      dotrow[column] = (column % 2 == 0) ? dots[g_board[row][column]] : verticle_edges[g_board[row][column]];
+      boxrow[column] =
+          (column % 2 == 0) ? horizontal_edges[g_board[row + 1][column]] : boxes[g_board[row][column]];
     }
     printf("%s\n%s\n", dotrow, boxrow);
   }
   char dotrow[2 * COLUMNS + 2];
   dotrow[2 * COLUMNS + 1] = '\0';
-  for (j = 0; j < 2 * COLUMNS + 1; j++)
-    dotrow[j] =
-        (j % 2 == 0) ? dots[g_board[2 * ROWS][j]] : vedges[g_board[2 * ROWS][j]];
+
+  //last column
+  for (column = 0; column < 2 * COLUMNS + 1; column++)
+  {
+    dotrow[column] =
+        (column % 2 == 0) ? dots[g_board[2 * ROWS][column]] : verticle_edges[g_board[2 * ROWS][column]];
+  }
   printf("%s\n", dotrow);
 }
 

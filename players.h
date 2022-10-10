@@ -17,7 +17,7 @@ typedef struct Player
 }player;
 
 
-void initPlayer();
+void init_players();
 
 
 
