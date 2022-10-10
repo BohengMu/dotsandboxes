@@ -21,7 +21,8 @@ char boxes[5] = {' ', '1', '2', 'x', 'x'};
 /*
  * Reconfigure the board to all zeros
  */
-void clear_board() {
+void clear_board()
+{
   int i, j;
   for (i = 0; i < 2 * ROWS + 1; i++)
   {
@@ -35,8 +36,10 @@ void clear_board() {
 
 /*
  * Print the current board
+ * TODO: make this work with the LED matrix
  */
-void print_board() {
+void print_board()
+{
   printf("--------------boad of size %i x %i--------------\n", ROWS, COLUMNS);
   int row, column;
   for (row = 0; row < 2 * ROWS; row += 2)

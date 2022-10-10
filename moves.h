@@ -16,7 +16,7 @@ void dehover_move(int i, int j);
 int select_move(int i, int j);
 int valid_move(int i, int j);
 char get_console_input();
-void move_hover(char move);
+void move_selection(char move);
 void hover_move(int i, int j);
 void dehover_move(int i, int j);
 

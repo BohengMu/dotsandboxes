@@ -11,7 +11,11 @@ struct Player player2;
 struct Player player1;
 struct Player g_players[2];
 
-void init_players() {
+/*
+ * initialize the global players
+ */
+void init_players()
+{
   player1.ID = 1;
   player2.ID = 2;
   player1.score = 0;
