@@ -10,12 +10,12 @@
 #include "driverlib.h"
 
 
-volatile int16_t encoderCount;
+volatile int16_t encoder_count;
 
 /*
  * set up encoder to be on pin 3.6 and 3.5
  */
-void configureEncoder(void)
+void configure_encoder(void)
 {
     NVIC->ISER[1] = 1 << ((PORT3_IRQn) & 31); //enable P3 interrupt
 
@@ -33,10 +33,10 @@ void PORT3_IRQHandler(void)
 {
     if(ENCODER_A_INTERRUPT){ //if P3 interrupted on A input
         if(ENCODER_B_HIGH){ //if B input is high, decrement count
-            encoderCount--;
+            encoder_count--;
         }
         else{
-            encoderCount++; //if A input is high, decrement count
+            encoder_count++; //if A input is high, decrement count
         }
     }
 }

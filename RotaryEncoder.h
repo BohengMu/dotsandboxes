@@ -10,7 +10,7 @@
 #define ROTARYENCODER_H_
 
 
-void configureEncoder(void);
+void configure_encoder(void);
 
 
 

@@ -13,7 +13,7 @@
 
 extern int g_current_x, g_current_y;
 extern int g_b_in_game;
-extern int16_t encoderCount;
+extern int16_t encoder_count;
 
 /**
  * main.c
@@ -22,9 +22,9 @@ void main(void)
 {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
     //initializing
-    configureADC();
-    configureEncoder();
-    configurePushButton();
+    configure_ADC();
+    configure_encoder();
+    configure_push_button();
     clear_board();
     print_board();
     init_players();
@@ -40,7 +40,7 @@ void main(void)
         { //if push button is pressed
 
         }
-        if(encoderCount > 0)
+        if(encoder_count > 0)
         { //if encoder is rotated clockwise
 
         }

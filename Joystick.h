@@ -9,7 +9,7 @@
 #define JOYSTICK_H_
 
 
-void configureADC(void);
+void configure_ADC(void);
 
 
 #endif /* JOYSTICK_H_ */

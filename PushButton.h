@@ -8,6 +8,6 @@
 #ifndef PUSHBUTTON_H_
 #define PUSHBUTTON_H_
 
-void configurePushButton(void);
+void configure_push_button(void);
 
 #endif /* PUSHBUTTON_H_ */

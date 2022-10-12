@@ -12,7 +12,7 @@
 /*
  * configure push button on pin 1.5
  */
-void configurePushButton()
+void configure_push_button()
 {
     //push button is on P1.5
     P1->DIR = 0x00;

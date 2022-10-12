@@ -14,7 +14,7 @@
  * configure the adc to take input from the analog joystick, which is currently
  * set to pin 5.5 and 5.4
  */
-void configureADC()
+void configure_ADC()
 {
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5, GPIO_PIN5, GPIO_TERTIARY_MODULE_FUNCTION);
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5, GPIO_PIN4, GPIO_TERTIARY_MODULE_FUNCTION);
