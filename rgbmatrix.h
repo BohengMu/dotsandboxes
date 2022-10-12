@@ -103,6 +103,12 @@ typedef struct
 
 } matrixrgb_cfg_t;
 
+
+/*
+ * initializing LED matrix rgb
+ */
+void LEDmatrixrgb_init ( void );
+
 /**
  * @brief Config Object Initialization function.
  *
@@ -120,6 +126,7 @@ void matrixrgb_cfg_setup ( matrixrgb_cfg_t *cfg );
  *
  * @description This function initializes all necessary pins and peripherals used for this click.
  */
+
 MATRIXRGB_RETVAL matrixrgb_init ( matrixrgb_t *ctx, matrixrgb_cfg_t *cfg );
 
 /**

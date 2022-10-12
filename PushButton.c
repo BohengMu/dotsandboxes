@@ -5,6 +5,13 @@
  *      Author: James Tsai
  */
 #include "PushButton.h"
+
+#include "msp.h"
+#include "driverlib.h"
+
+/*
+ * configure push button on pin 1.5
+ */
 void configurePushButton()
 {
     //push button is on P1.5

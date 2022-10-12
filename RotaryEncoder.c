@@ -6,6 +6,15 @@
  */
 #include "RotaryEncoder.h"
 #include "Defines.h"
+#include "msp.h"
+#include "driverlib.h"
+
+
+volatile int16_t encoderCount;
+
+/*
+ * set up encoder to be on pin 3.6 and 3.5
+ */
 void configureEncoder(void)
 {
     NVIC->ISER[1] = 1 << ((PORT3_IRQn) & 31); //enable P3 interrupt
@@ -17,6 +26,9 @@ void configureEncoder(void)
     P3->DIR &= ~BIT5;   // B input
 }
 
+/*
+ * IRQ hander for port 3, which is triggered by the encoder
+ */
 void PORT3_IRQHandler(void)
 {
     if(ENCODER_A_INTERRUPT){ //if P3 interrupted on A input

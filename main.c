@@ -13,6 +13,7 @@
 
 extern int g_current_x, g_current_y;
 extern int g_b_in_game;
+extern int16_t encoderCount;
 
 /**
  * main.c
@@ -29,7 +30,7 @@ void main(void)
     init_players();
     hover_move(g_current_x, g_current_y);
     print_board();
-    LEDmatrixrgbinit();
+    LEDmatrixrgb_init();
 
     while (g_b_in_game) {
         ADC14_CONVERSION_START; //begin ADC conversion

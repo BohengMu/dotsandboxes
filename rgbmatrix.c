@@ -21,6 +21,10 @@
 
 static void send_command ( matrixrgb_t *ctx,  uint8_t cmd, uint8_t arg );
 
+
+/*
+ * set up the matrix with spi speed/mode
+ */
 void matrixrgb_cfg_setup ( matrixrgb_cfg_t *cfg )
 {
     // Communication gpio pins
@@ -41,6 +45,10 @@ void matrixrgb_cfg_setup ( matrixrgb_cfg_t *cfg )
     cfg->cs_polarity = EUSCI_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
 }
 
+
+/*
+ * initialize other spi configs and clock configs
+ */
 MATRIXRGB_RETVAL matrixrgb_init ( matrixrgb_t *ctx, matrixrgb_cfg_t *cfg )
 {
 
@@ -79,14 +87,10 @@ void matrixrgb_generic_transfer
     SPI_transmitData(EUSCI_A0_BASE, wr_buf);
     rd_buf = SPI_receiveData(EUSCI_A0_BASE);
 
-    /**
-    spi_master_select_device( ctx->chip_select );
-    spi_master_write_then_read( &ctx->spi, wr_buf, wr_len, rd_buf, rd_len );
-    spi_master_deselect_device( ctx->chip_select );
-    */
 }
 
-/**
+//commenting out the resent
+#if 0
 void matrixrgb_device_reset ( matrixrgb_t *ctx )
 {
     digital_out_high( &ctx->rst );
@@ -96,7 +100,7 @@ void matrixrgb_device_reset ( matrixrgb_t *ctx )
     digital_out_high( &ctx->rst );
     Delay_100ms();
 }
-*/
+#endif
 
 uint8_t matrixrgb_device_settings ( matrixrgb_t *ctx, uint8_t pattern_id )
 {
@@ -177,6 +181,10 @@ void matrixrgb_set_power ( matrixrgb_t *ctx, uint8_t power_state )
     send_command( ctx, MATRIXRGB_CMD_POWER, tmp  );
 }
 
+
+/*
+ * set the brightness of the screen
+ */
 void matrixrgb_set_brightness ( matrixrgb_t *ctx, uint8_t brightness )
 {
     uint8_t tmp;
@@ -184,6 +192,10 @@ void matrixrgb_set_brightness ( matrixrgb_t *ctx, uint8_t brightness )
     send_command( ctx, MATRIXRGB_CMD_BRIGHTNESS, tmp );
 }
 
+
+/*
+ * write a pixel at coordinates x,y to a color
+ */
 uint8_t matrixrgb_write_pixel ( matrixrgb_t *ctx, uint16_t x, uint16_t y, uint16_t color )
 {
     uint8_t cmd;
@@ -203,7 +215,6 @@ uint8_t matrixrgb_write_pixel ( matrixrgb_t *ctx, uint16_t x, uint16_t y, uint16
     tmp[2] = pos;
     tmp[3] = pos >> 8;
 
-    //wait_int_pin( ctx );
 
     SPI_transmitData(EUSCI_A0_BASE, &cmd);
     SPI_transmitData(EUSCI_A0_BASE, tmp[0]);
@@ -215,6 +226,9 @@ uint8_t matrixrgb_write_pixel ( matrixrgb_t *ctx, uint16_t x, uint16_t y, uint16
     return 0;
 }
 
+/*
+ * fill screen with a specific color
+ */
 void matrixrgb_fill_screen ( matrixrgb_t *ctx, uint16_t color )
 {
     uint8_t cmd;
@@ -225,7 +239,6 @@ void matrixrgb_fill_screen ( matrixrgb_t *ctx, uint16_t color )
     tmp[ 0 ] = color;
     tmp[ 1 ] = color >> 8;
 
-    //wait_int_pin( ctx );
 
     SPI_transmitData(EUSCI_A0_BASE, &cmd);
 
@@ -241,7 +254,9 @@ void matrixrgb_fill_screen ( matrixrgb_t *ctx, uint16_t color )
     Clock_Delay1ms(1);
 }
 
-
+/*
+ * initialize matrix
+ */
 void LEDmatrixrgb_init ( void )
 {
     matrixrgb_cfg_t cfg;
@@ -262,6 +277,10 @@ void LEDmatrixrgb_init ( void )
     Clock_Delay1ms( 1000 );
 }
 
+
+/*
+ * testing matrix rgb
+ */
 void LEDmatrixrgb_task ( )
 {
     uint16_t test;
@@ -317,3 +336,5 @@ static void send_command ( matrixrgb_t *ctx, uint8_t cmd, uint8_t arg )
     SPI_transmitData(EUSCI_A0_BASE, tx_buf[1]);
     Clock_Delay1ms(1);
 }
+
+//end of file
