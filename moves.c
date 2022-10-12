@@ -56,28 +56,36 @@ void move_selection(char move)
   //move up
   case 'w':
     if (valid_move(g_current_x - 1, g_current_y))
-      g_current_x--;
+    {
+        g_current_x--;
+    }
+
     hover_move(g_current_x, g_current_y);
     break;
 
   //move down
   case 's':
     if (valid_move(g_current_x + 1, g_current_y))
-      g_current_x++;
+    {
+        g_current_x++;
+    }
     hover_move(g_current_x, g_current_y);
     break;
 
   //move left
   case 'a':
-    if (valid_move(g_current_x, g_current_y - 1))
-      g_current_y--;
+    if (valid_move(g_current_x, g_current_y - 1)){
+        g_current_y--;
+    }
     hover_move(g_current_x, g_current_y);
     break;
 
   //move right
   case 'd':
-    if (valid_move(g_current_x, g_current_y + 1))
-      g_current_y++;
+    if (valid_move(g_current_x, g_current_y + 1)){
+        g_current_y++;
+    }
+
     hover_move(g_current_x, g_current_y);
     break;
 
@@ -130,7 +138,7 @@ int select_move(int select_x, int select_y)
     if (g_board[select_x][select_y] != 0)
     {
       printf("Cannot select a selected move!\n");
-      hover_move(g_current_x, g_current_y);
+      //hover_move(g_current_x, g_current_y);
       return 0;
     }
 
@@ -148,7 +156,7 @@ int select_move(int select_x, int select_y)
       }
       if (check_box(select_x, select_y - 1) && g_board[select_x][select_y - 1] == 0)
       {
-          g_board[select_x][select_y - 1] = g_players[current_player_id].ID;
+        g_board[select_x][select_y - 1] = g_players[current_player_id].ID;
         g_players[current_player_id].score++;
         move_again++;
       }
@@ -160,11 +168,13 @@ int select_move(int select_x, int select_y)
         g_players[current_player_id].score++;
         move_again++;
       }
+      if(check_box(select_x - 1, select_y) && g_board[select_x - 1][select_y] == 0){
         g_board[select_x - 1][select_y] = g_players[current_player_id].ID;
         g_players[current_player_id].score++;
         move_again++;
       }
     }
+  }
 
     //check if player gets to move again
     if (move_again)
@@ -179,7 +189,7 @@ int select_move(int select_x, int select_y)
  */
 int valid_move(int move_x, int move_y)
 {
-  int valid = (move_x >= 0) && (move_x < ROWS * 2 + 1 && move_y >= 0) && (move_y < COLUMNS * 2 + 1);
+  int valid = (move_x >= 0) && (move_x < ROWS * 2 + 1) && (move_y >= 0) && (move_y < COLUMNS * 2 + 1);
   if (!valid)
     printf("Out of Bounds!\n");
   return valid;

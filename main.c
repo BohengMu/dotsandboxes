@@ -30,11 +30,11 @@ void main(void)
     init_players();
     hover_move(g_current_x, g_current_y);
     print_board();
-    LEDmatrixrgb_init();
+    //LEDmatrixrgb_init();
 
     while (g_b_in_game) {
-        ADC14_CONVERSION_START; //begin ADC conversion
-        while(!(ADC14_CONVERSION_FINISHED)); //wait for conversion to finish
+        //ADC14_CONVERSION_START; //begin ADC conversion
+        //while(!(ADC14_CONVERSION_FINISHED)); //wait for conversion to finish
 
         if(!(PUSH_INPUT & PUSH_PIN))
         { //if push button is pressed
@@ -48,6 +48,7 @@ void main(void)
         { //if encoder is rotated counterclockwise
 
         }
+
         char move = get_console_input();
         if (move == '\n')
         {

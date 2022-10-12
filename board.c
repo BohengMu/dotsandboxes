@@ -51,7 +51,7 @@ void print_board()
     for (column = 0; column < 2 * COLUMNS + 1; column++) {
       dotrow[column] = (column % 2 == 0) ? dots[g_board[row][column]] : verticle_edges[g_board[row][column]];
       boxrow[column] =
-          (column % 2 == 0) ? horizontal_edges[g_board[row + 1][column]] : boxes[g_board[row][column]];
+          (column % 2 == 0) ? horizontal_edges[g_board[row + 1][column]] : boxes[g_board[row+1][column]];
     }
     printf("%s\n%s\n", dotrow, boxrow);
   }
