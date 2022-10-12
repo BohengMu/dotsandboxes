@@ -5,6 +5,9 @@
 #include "RotaryEncoder.h"
 #include "PushButton.h"
 #include "Joystick.h"
+#include "rgbmatrix.h"
+#include "Clock.h"
+#include "spi.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -26,6 +29,7 @@ void main(void)
     init_players();
     hover_move(g_current_x, g_current_y);
     print_board();
+    LEDmatrixrgbinit();
 
     while (g_b_in_game) {
         ADC14_CONVERSION_START; //begin ADC conversion
