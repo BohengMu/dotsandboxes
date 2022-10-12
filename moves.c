@@ -146,28 +146,36 @@ int select_move(int select_x, int select_y)
     g_board[select_x][select_y] = 1;
 
     // check for adjacent boxes
-    if (select_x % 2 == 1)
+    if (select_x % 2 == 1) //for boxes row
     {
+
+      //check box right
       if (check_box(select_x, select_y + 1) && g_board[select_x][select_y + 1] == 0)
       {
         g_board[select_x][select_y + 1] = g_players[current_player_id].ID;
         g_players[current_player_id].score++;
         move_again++;
       }
+
+      //check box left
       if (check_box(select_x, select_y - 1) && g_board[select_x][select_y - 1] == 0)
       {
         g_board[select_x][select_y - 1] = g_players[current_player_id].ID;
         g_players[current_player_id].score++;
         move_again++;
       }
-    } else
+    } else // for dots row
     {
+
+      //check for box below
       if (check_box(select_x + 1, select_y) && g_board[select_x + 1][select_y] == 0)
       {
         g_board[select_x + 1][select_y] = g_players[current_player_id].ID;
         g_players[current_player_id].score++;
         move_again++;
       }
+
+      //check for box above
       if(check_box(select_x - 1, select_y) && g_board[select_x - 1][select_y] == 0){
         g_board[select_x - 1][select_y] = g_players[current_player_id].ID;
         g_players[current_player_id].score++;

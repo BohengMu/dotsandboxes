@@ -21,8 +21,7 @@ void configure_ADC()
     MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_4, 0);
 
     //set sample mode for ADC buffer 0 and 1, store conversion results in MEM0 and MEM1
-    MAP_ADC14_configureSingleSampleMode(ADC_MEM0, true);
-    MAP_ADC14_configureSingleSampleMode(ADC_MEM1, true);
+    MAP_ADC14_configureMultiSequenceMode(ADC_MEM0, ADC_MEM1, true);
 
     //configuring 32 registers for ADC, range is 2.5 V, ADC_INPUT_A0 = pin 5.5, ADC_INPUT_A1 = pin 5.4
     MAP_ADC14_configureConversionMemory(ADC_MEM0, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A0, false);
