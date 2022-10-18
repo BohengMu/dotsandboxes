@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int g_current_x, g_current_y;
+extern int g_dot_x, g_dot_y;
 extern int g_b_in_game;
 extern int16_t encoder_count;
 
@@ -28,7 +28,7 @@ void main(void)
     clear_board();
     print_board();
     init_players();
-    hover_move(g_current_x, g_current_y);
+    select_dot(g_dot_x, g_dot_y);
     print_board();
     //LEDmatrixrgb_init();
 
@@ -54,9 +54,9 @@ void main(void)
         {
             continue;
         }
-        move_selection(move);
+        process_move(move);
         print_board();
-        printf("X: %i, Y: %i\n", g_current_x, g_current_y);
+        printf("X: %i, Y: %i\n", g_dot_x, g_dot_y);
         }
     return;
 }
