@@ -11,6 +11,9 @@
 
 #define ROWS 10
 #define COLUMNS 10
+#define LED_MATRIX_SIZE 32
+#define BOX_SIZE ((LED_MATRIX_SIZE-1)/ROWS +1)
+#define INNER_BOX_SIZE (BOX_SIZE - 2)
 #define JOYSTICK_V ADC_MEM0
 #define JOYSTICK_H ADC_MEM1
 #define JOYSTICK_V_PORT P5

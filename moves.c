@@ -10,21 +10,36 @@
 #include "defines.h"
 #include "players.h"
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+//player infomation
 extern struct Player g_players[2];
+
+//game state board
 extern int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
 
+//led representation
+extern int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
+
+//x, y changes for iteration
 int y_change[4] = {0, 1, 0, -1};
 int x_change[4] = {-1, 0, 1, 0};
 
+//global values
 int g_b_in_game = 1;
 int g_dot_x = 0, g_dot_y = 0;
-int current_player_id = 0;
-bool hover_line = 0;
-int line_direction = -1;
 int g_line_x = 0, g_line_y = 0;
+
+// who is currently moving
+int current_player_id = 0;
+
+//wheter a line is hovered
+bool hover_line = 0;
+
+//which direction is the line pointing
+int line_direction = -1;
+
 
 /*
  * gets the console input
@@ -38,7 +53,9 @@ char get_console_input()
   printf("select a move for player %i: ", g_players[current_player_id].ID);
 
   move = getchar();
-  while(move == '\n')
+
+  //repeat until a valid caracter is grapped
+  while (move == '\n')
   {
     move = getchar();
   }
@@ -51,9 +68,10 @@ char get_console_input()
  */
 void process_move(char move)
 {
-
+  //boolean for when a player makes a mistake or completes a box
   bool b_can_move_again;
-  switch (move) {
+  switch (move)
+  {
   // move up
   case 'w':
     move_dot_selection(g_dot_x - 2, g_dot_y);
@@ -94,8 +112,7 @@ void process_move(char move)
     b_can_move_again = submit_selected_line();
 
     // change players of no boxes are formed
-    if (!b_can_move_again)
-    {
+    if (!b_can_move_again) {
       current_player_id += 1;
       current_player_id %= 2;
     }
@@ -108,15 +125,15 @@ void process_move(char move)
  */
 bool submit_selected_line()
 {
-  //check if the line is valid
+  // check if the line is valid
   bool b_can_move_again = false;
 
   // chech if the line can be selected
-  if (line_direction == -1) {
+  if (line_direction == -1)
+  {
     printf("Cannot select move, no line is selected\n");
     return true;
   }
-
 
   // check if the move have been selected
   if (g_board[g_line_x][g_line_y] == 3)
@@ -125,8 +142,11 @@ bool submit_selected_line()
     return true;
   }
 
-  // select the move
+  // select the move in game state
   g_board[g_line_x][g_line_y] = 3;
+
+  // reflect in led
+  write_led_edge(g_line_x, g_line_y, g_board[g_line_x][g_line_y]);
 
   // check for adjacent boxes
   if (g_line_x % 2 == 1) // for boxes row
@@ -135,7 +155,13 @@ bool submit_selected_line()
     // check box right
     if (check_box(g_line_x, g_line_y + 1))
     {
+      // update box in game state
       g_board[g_line_x][g_line_y + 1] = g_players[current_player_id].ID;
+
+      // update in led
+      write_led_box(g_line_x, g_line_y + 1, g_board[g_line_x][g_line_y + 1]);
+
+      // update score
       g_players[current_player_id].score++;
       b_can_move_again = true;
     }
@@ -143,7 +169,13 @@ bool submit_selected_line()
     // check box left
     if (check_box(g_line_x, g_line_y - 1))
     {
+      // update box in game state
       g_board[g_line_x][g_line_y - 1] = g_players[current_player_id].ID;
+
+      // update in led
+      write_led_box(g_line_x, g_line_y - 1, g_board[g_line_x][g_line_y - 1]);
+
+      // update score
       g_players[current_player_id].score++;
       b_can_move_again = true;
     }
@@ -153,7 +185,13 @@ bool submit_selected_line()
     // check for box below
     if (check_box(g_line_x + 1, g_line_y))
     {
+      // update box in game state
       g_board[g_line_x + 1][g_line_y] = g_players[current_player_id].ID;
+
+      // update in led
+      write_led_box(g_line_x + 1, g_line_y, g_board[g_line_x + 1][g_line_y]);
+
+      // update score
       g_players[current_player_id].score++;
       b_can_move_again = true;
     }
@@ -161,7 +199,13 @@ bool submit_selected_line()
     // check for box above
     if (check_box(g_line_x - 1, g_line_y))
     {
+      // update box in game state
       g_board[g_line_x - 1][g_line_y] = g_players[current_player_id].ID;
+
+      // update in led
+      write_led_box(g_line_x - 1, g_line_y, g_board[g_line_x - 1][g_line_y]);
+
+      // update score
       g_players[current_player_id].score++;
       b_can_move_again = true;
     }
@@ -182,8 +226,7 @@ bool submit_selected_line()
 void move_dot_selection(int dot_x, int dot_y)
 {
   // check if dot is within bounds
-  if (!valid_move(dot_x, dot_y))
-  {
+  if (!valid_move(dot_x, dot_y)) {
     printf("Cannot select move, out of bounds \n");
     return;
   } else {
@@ -195,7 +238,7 @@ void move_dot_selection(int dot_x, int dot_y)
     }
     unselect_dot();
 
-    // move the new selections, and change game state
+    // move the new selections
     select_dot(dot_x, dot_y);
     g_dot_x = dot_x;
     g_dot_y = dot_y;
@@ -213,7 +256,7 @@ void move_line_selection(bool b_is_clockwise)
   if (line_direction != -1)
   {
     unselect_line();
-  }else{ //if no line is selected, select one first
+  } else { // if no line is selected, select one first
     line_direction = 0;
   }
   int new_line_x, new_line_y;
@@ -223,24 +266,31 @@ void move_line_selection(bool b_is_clockwise)
     // add 1 if is clocwise, subtract 1 if counter clockwise
     if (b_is_clockwise)
     {
+      //increment clockwise
       line_direction += 1;
+
+      //cycle
       line_direction %= 4;
-    }else
-    {
+    } else {
+      //decrement counter clockwise
       line_direction -= 1;
-      if(line_direction < 0)
+
+      //c does not do negative mod very well
+      if (line_direction < 0)
       {
         line_direction += 4;
       }
+
+      //cycle
       line_direction %= 4;
     }
 
-    //recalculate line
+    //determine line selected
     new_line_x = g_dot_x + x_change[line_direction];
     new_line_y = g_dot_y + y_change[line_direction];
   } while (!valid_move(new_line_x, new_line_y));
 
-  //select the line and change game stated
+  //seletect the line and set update values
   select_line(new_line_x, new_line_y);
   g_line_x = new_line_x;
   g_line_y = new_line_y;
@@ -248,7 +298,7 @@ void move_line_selection(bool b_is_clockwise)
 }
 
 /*
- * checks of the move is within the bounds
+ * checks of the move is within the bounds of the game state
  */
 bool valid_move(int move_x, int move_y)
 {
@@ -260,17 +310,21 @@ bool valid_move(int move_x, int move_y)
 /*
  * Checks if the box is completed
  */
-bool check_box(int box_x, int box_y) {
-  if (valid_move(box_x, box_y)) {
+bool check_box(int box_x, int box_y)
+{
+  if (valid_move(box_x, box_y))
+  {
     int count = 0;
     int direction;
 
     // check that lines in all 4 direction is selected
-    for (direction = 0; direction < 4; direction++) {
+    for (direction = 0; direction < 4; direction++)
+    {
       if (g_board[box_x + x_change[direction]][box_y + y_change[direction]])
         count++;
     }
-    if (count == 4) {
+    if (count == 4)
+    {
       printf("!!!!!!!!!!!!!got a box!!!!!!!!!!!!!\n");
       return true;
     }
@@ -280,38 +334,50 @@ bool check_box(int box_x, int box_y) {
 
 /*
  * change the dot from neutral state to selected state based on input (x, y)
- * this is to help the output to reflect the changes in selection
+ * this is to help the output to refelect the changes in selection
  */
 void select_dot(int dot_x, int dot_y)
 {
-    g_board[dot_x][dot_y] = 1;
+  // reflect game state
+  g_board[dot_x][dot_y] = 1;
+
+  // reflect led
+  write_led_dot(dot_x, dot_y, 1);
 }
 
 /*
  * un-hover the dot for the current dot selection
- * this is to help the output to reflect the changes in selection
+ * this is to help the output to refelect the changes in selection
  */
-void unselect_dot()
-{
-    g_board[g_dot_x][g_dot_y] = 0;
+void unselect_dot() {
+  // reflect game state
+  g_board[g_dot_x][g_dot_y] = 0;
+
+  // reflect led
+  write_led_dot(g_dot_x, g_dot_y, 0);
 }
 
 /*
  * change a line from neutral state to selected based on input (x, y)
- * this is to help the output to reflect the changes in selection
+ * this is to help the output to refelect the changes in selection
  */
-void select_line(int line_x, int line_y)
-{
+void select_line(int line_x, int line_y) {
   g_board[line_x][line_y] = g_board[line_x][line_y] + 2;
+
+  // reflect led
+  write_led_edge(line_x, line_y, g_board[line_x][line_y]);
 }
 
 /*
  * unselect the current line
- * this is to help the output to reflect the changes in selection
+ * this is to help the output to refelect the changes in selection
  */
-void unselect_line()
-{
+void unselect_line() {
+  // reflect game state
   g_board[g_line_x][g_line_y] = g_board[g_line_x][g_line_y] - 2;
+
+  // reflect led
+  write_led_edge(g_line_x, g_line_y, g_board[g_line_x][g_line_y]);
 }
 
 // end of file

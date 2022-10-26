@@ -1,3 +1,10 @@
+/*
+ * main.c
+ *
+ *  Created on: Oct 25, 2022
+ *      Author: mub91
+ */
+
 #include "msp.h"
 #include "board.h"
 #include "moves.h"
@@ -11,53 +18,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int g_dot_x, g_dot_y;
-extern int g_b_in_game;
-extern int16_t encoder_count;
 
-/**
- * main.c
- */
 void main(void)
 {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
-    //initializing
-    configure_ADC();
-    configure_encoder();
-    configure_push_button();
-    clear_board();
-    print_board();
+
+    //initializing taken out for now to test Boheng's code
+    //configure_ADC();
+    //configure_encoder();
+    //configure_push_button();
+
+    //initialize player values
     init_players();
-    select_dot(g_dot_x, g_dot_y);
+
+    //set dots to selcted and everyting else to zero
+    clear_board();
+
+    //write initial dots to led
+    write_initial_dots();
+
+    //select top left dot as begining move
+    select_dot(0, 0);
+
+    //print initial game state
     print_board();
-    //LEDmatrixrgb_init();
 
-    while (g_b_in_game) {
-        //ADC14_CONVERSION_START; //begin ADC conversion
-        //while(!(ADC14_CONVERSION_FINISHED)); //wait for conversion to finish
-
-        if(!(PUSH_INPUT & PUSH_PIN))
-        { //if push button is pressed
-
-        }
-        if(encoder_count > 0)
-        { //if encoder is rotated clockwise
-
-        }
-        else
-        { //if encoder is rotated counterclockwise
-
-        }
-
+    while (true) {
+        //get input as from keyboard as a simulation
+        // will be done automatically in the back ground
         char move = get_console_input();
-        if (move == '\n')
-        {
-            continue;
-        }
+
+        // process the current input state
         process_move(move);
+
+        // update the output state
         print_board();
-        printf("X: %i, Y: %i\n", g_dot_x, g_dot_y);
-        }
+    }
     return;
 }
 //end of file
