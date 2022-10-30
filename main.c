@@ -2,6 +2,7 @@
  * main.c
  *
  *  Created on: Oct 25, 2022
+<<<<<<< HEAD
  *      Author: mub91
  */
 
@@ -15,8 +16,16 @@
 #include "rgbmatrix.h"
 #include "Clock.h"
 #include "spi.h"
+#include "driverlib.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+
+/**
+ * main.c runs all the initialization code for user inputs and game simulation.
+ * while loop in main continuously runs ADC conversions
+ *
+ */
 
 
 void main(void)
@@ -27,6 +36,13 @@ void main(void)
     //configure_ADC();
     //configure_encoder();
     //configure_push_button();
+
+    //initializing game simulation and user inputs
+    //configures adc to read in joystick input, see Joystick.c
+    configure_ADC();
+
+    //configure encoder input, see RotaryEncoder.c
+    configure_encoder();
 
     //initialize player values
     init_players();
@@ -56,4 +72,5 @@ void main(void)
     }
     return;
 }
+
 //end of file

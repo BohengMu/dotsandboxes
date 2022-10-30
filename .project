@@ -26,8 +26,12 @@
 	</natures>
 	<variableList>
 		<variable>
+			<name>ORIGINAL_PROJECT_ROOT</name>
+			<value>file:/C:/Users/James%20Tsai/Documents/James%20Tsai/ECE%20Capstone/Programming/dotsandboxes</value>
+		</variable>
+		<variable>
 			<name>copy_PARENT</name>
-			<value>$%7BPARENT-5-PROJECT_LOC%7D</value>
+			<value>$%7BPARENT-5-ORIGINAL_PROJECT_ROOT%7D</value>
 		</variable>
 	</variableList>
 </projectDescription>
