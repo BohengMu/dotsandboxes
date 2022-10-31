@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 
-volatile int16_t g_encoder_count = 0;
+volatile enum EncoderState g_encoder_state = Neutral;
 
 /*
  * set up encoder to be A input on pin 3.6 and B input on pin 3.5.
@@ -44,14 +44,15 @@ void PORT3_IRQHandler(void)
     {
         if(ENCODER1_B_HIGH) //if B input is high, increment count for clockwise
         {
-            g_encoder_count++;
+            g_encoder_state =  Clockwise;
         }
         else //if B input is low, decrement count for counterclockwise
         {
-            g_encoder_count--;
+            g_encoder_state = CounterClockwise;
         }
         P3->IFG &= ~BIT6; //reset interrupt flag for P3.6
     }
+
 }
 
 //end of file

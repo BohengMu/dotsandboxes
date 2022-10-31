@@ -13,5 +13,7 @@
 extern volatile int16_t g_encoder_count;
 void configure_encoder(void);
 
+//state variables for Encoder State;
+enum EncoderState{Neutral, Clockwise, CounterClockwise};
 
 #endif /* ROTARYENCODER_H_ */

@@ -13,6 +13,14 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "RotaryEncoder.h"
+#include "PushButton.h"
+#include "Joystick.h"
+
+//input states
+extern volatile enum EncoderState g_encoder_state;
+extern volatile bool g_button_pressed;
+
 //player infomation
 extern struct Player g_players[2];
 
@@ -69,6 +77,8 @@ char get_console_input()
 void process_move(char move)
 {
   //boolean for when a player makes a mistake or completes a box
+
+  //TODO: take a snapshot of the
   bool b_can_move_again;
   switch (move)
   {
