@@ -35,7 +35,7 @@ void main(void)
     //initializing taken out for now to test Boheng's code
     //configure_ADC();
     //configure_encoder();
-    //configure_push_button();
+    configure_push_button();
     Clock_Init48MHz();
     //initializing game simulation and user inputs
     //configures adc to read in joystick input, see Joystick.c

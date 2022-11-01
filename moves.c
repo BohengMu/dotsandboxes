@@ -109,17 +109,17 @@ void process_move(char move)
         break;
   }
 
-//  if (button_pressed_copy != 0)
-//  {
-//      b_can_move_again = submit_selected_line();
-//
-//      // change players of no boxes are formed
-//      if (!b_can_move_again) {
-//          current_player_id += 1;
-//          current_player_id %= 2;
-//      }
-//      return;
-//  }
+  if (button_pressed_copy != 0)
+  {
+      b_can_move_again = submit_selected_line();
+
+      // change players of no boxes are formed
+      if (!b_can_move_again) {
+          current_player_id += 1;
+          current_player_id %= 2;
+      }
+      return;
+  }
 //
 //  switch (move)
 //  {
