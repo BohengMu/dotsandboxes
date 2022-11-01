@@ -10,9 +10,11 @@
 #include <stdbool.h>
 
 void configure_push_button(void);
-extern volatile bool g_button_pressed;
 
 //state variables for pushbutton state
 enum ButtonState{NotPressed, Pressed};
+
+enum ButtonState check_button_state(void);
+
 
 #endif /* PUSHBUTTON_H_ */

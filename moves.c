@@ -19,8 +19,7 @@
 
 //input states
 extern volatile enum EncoderState g_encoder_state;
-extern volatile bool g_button_pressed;
-
+extern volatile enum ButtonState g_button_state;
 //player infomation
 extern struct Player g_players[2];
 
@@ -83,12 +82,12 @@ void process_move(char move)
 
   //take a snapshor
   enum EncoderState encoder_state_copy = g_encoder_state;
-  bool button_pressed_copy = g_button_pressed;
+  enum ButtonState button_pressed_copy = g_button_state;
 
   //reset input state
 
 
-  g_button_pressed = 0;
+  g_button_state = NotPressed;
 
   switch(encoder_state_copy)
   {
@@ -109,7 +108,7 @@ void process_move(char move)
         break;
   }
 
-  if (button_pressed_copy != 0)
+  if (button_pressed_copy != NotPressed)
   {
       b_can_move_again = submit_selected_line();
 
