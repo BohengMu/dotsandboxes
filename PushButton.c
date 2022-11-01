@@ -11,7 +11,8 @@
 #include "msp.h"
 #include "driverlib.h"
 
-volatile bool g_button_pressed = 0;
+volatile enum ButtonState g_button_state;
+
 
 /*
  * Push button is configured on pin 1.5 with pull up resistor.
@@ -39,6 +40,22 @@ void configure_push_button()
  * Game logic will set button_pressed to 0 after move is authorized.
  *
  */
+enum ButtonState check_button_state()
+{
+    /*
+     * Poll routine for PushButton, which is polled every 2 ms.
+     * Handler will set button_pressed to 1 if interrupted.
+     * Game logic will set button_pressed to 0 after move is authorized.
+     *
+     */
+    //if P1.5 is active low
+    if(P1->IN & BIT5){
+        g_button_state = Pressed;
+    }
+    else{
+        g_button_state = NotPressed;
+    }
+}
 
 
 //end of file

@@ -9,6 +9,7 @@
 #include "msp.h"
 #include "driverlib.h"
 
+volatile enum JoystickState g_joystick_state;
 
 /*
  * ADC configuration sets the ADC to take input from the analog joystick, which is currently
@@ -53,6 +54,39 @@ void configure_ADC()
 
     // enable conversion on ADC
     ADC14->CTL0 |= ADC14_CTL0_ENC;
+}
+enum JoystickState check_ADC_state()
+{
+    if(!ADC14_CONVERSION_FINISHED)
+    {
+        g_joystick_state = Zero;
+    }
+    else
+    {
+        if(JOYSTICK_UP)
+        {
+            g_joystick_state = Up;
+        }
+        else if(JOYSTICK_DOWN)
+        {
+            g_joystick_state = Down;
+        }
+        else if(JOYSTICK_LEFT)
+        {
+            g_joystick_state = Left;
+        }
+        else if(JOYSTICK_RIGHT)
+        {
+            g_joystick_state = Right;
+        }
+        else
+        {
+            g_joystick_state = Zero;
+        }
+
+        ADC14_CONVERSION_START;
+    }
+    return g_joystick_state;
 }
 
 //end of file
