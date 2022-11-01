@@ -44,11 +44,11 @@ void PORT3_IRQHandler(void)
     {
         if(ENCODER1_B_HIGH) //if B input is high, increment count for clockwise
         {
-            g_encoder_state =  Clockwise;
+            g_encoder_state =  CounterClockwise;
         }
         else //if B input is low, decrement count for counterclockwise
         {
-            g_encoder_state = CounterClockwise;
+            g_encoder_state = Clockwise;
         }
         P3->IFG &= ~BIT6; //reset interrupt flag for P3.6
     }

@@ -12,10 +12,10 @@
 #include <stdlib.h>
 
 //game state board
-int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
+volatile int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
 
 //led board
-int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
+volatile int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
 
 //game state prin representations
 char verticle_edges[4] = {' ', '-', '^', 'x'};

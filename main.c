@@ -36,7 +36,7 @@ void main(void)
     //configure_ADC();
     //configure_encoder();
     //configure_push_button();
-
+    Clock_Init48MHz();
     //initializing game simulation and user inputs
     //configures adc to read in joystick input, see Joystick.c
     configure_ADC();
@@ -54,21 +54,22 @@ void main(void)
     write_initial_dots();
 
     //select top left dot as begining move
-    select_dot(0, 0);
+    select_dot(2, 2);
 
     //print initial game state
-    print_board();
+    //print_board();
 
     while (true) {
         //get input as from keyboard as a simulation
         // will be done automatically in the back ground
-        char move = get_console_input();
+        //char move = get_console_input();
 
         // process the current input state
-        process_move(move);
+        process_move('a');
 
         // update the output state
-        print_board();
+        //print_board();
+        Clock_Delay1us(10000);
     }
     return;
 }

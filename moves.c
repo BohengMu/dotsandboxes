@@ -25,10 +25,10 @@ extern volatile bool g_button_pressed;
 extern struct Player g_players[2];
 
 //game state board
-extern int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
+extern volatile int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
 
 //led representation
-extern int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
+extern volatile int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
 
 //x, y changes for iteration
 int y_change[4] = {0, 1, 0, -1};
@@ -36,7 +36,7 @@ int x_change[4] = {-1, 0, 1, 0};
 
 //global values
 int g_b_in_game = 1;
-int g_dot_x = 0, g_dot_y = 0;
+int g_dot_x = 2, g_dot_y = 2;
 int g_line_x = 0, g_line_y = 0;
 
 // who is currently moving
@@ -80,54 +80,96 @@ void process_move(char move)
 
   //TODO: take a snapshot of the
   bool b_can_move_again;
-  switch (move)
+
+  //take a snapshor
+  enum EncoderState encoder_state_copy = g_encoder_state;
+  bool button_pressed_copy = g_button_pressed;
+
+  //reset input state
+
+
+  g_button_pressed = 0;
+
+  switch(encoder_state_copy)
   {
-  // move up
-  case 'w':
-    move_dot_selection(g_dot_x - 2, g_dot_y);
-    break;
-
-  // move down
-  case 's':
-    move_dot_selection(g_dot_x + 2, g_dot_y);
-    break;
-
-  // move left
-  case 'a':
-    move_dot_selection(g_dot_x, g_dot_y - 2);
-    break;
-
-  // move right
-  case 'd':
-    move_dot_selection(g_dot_x, g_dot_y + 2);
-    break;
-
   // rotate counter clock wise
-  case 'q':
-    move_line_selection(false);
-    break;
+    case CounterClockwise:
+      move_line_selection(false);
+      g_encoder_state = Neutral;
+      return;
 
-  // rotate clock wise
-  case 'e':
-    move_line_selection(true);
-    break;
+    // rotate clock wise
+    case Clockwise:
+      move_line_selection(true);
+      g_encoder_state = Neutral;
+      return;
 
-  // quit game
-  case 'k':
-    g_b_in_game = 0;
-    break;
-
-  // lock in move
-  case 'l':
-    b_can_move_again = submit_selected_line();
-
-    // change players of no boxes are formed
-    if (!b_can_move_again) {
-      current_player_id += 1;
-      current_player_id %= 2;
-    }
-    break;
+    //no inputs detected
+    case Neutral:
+        break;
   }
+
+//  if (button_pressed_copy != 0)
+//  {
+//      b_can_move_again = submit_selected_line();
+//
+//      // change players of no boxes are formed
+//      if (!b_can_move_again) {
+//          current_player_id += 1;
+//          current_player_id %= 2;
+//      }
+//      return;
+//  }
+//
+//  switch (move)
+//  {
+//  // move up
+//  case 'w':
+//    move_dot_selection(g_dot_x - 2, g_dot_y);
+//    break;
+//
+//  // move down
+//  case 's':
+//    move_dot_selection(g_dot_x + 2, g_dot_y);
+//    break;
+//
+//  // move left
+//  case 'a':
+//    move_dot_selection(g_dot_x, g_dot_y - 2);
+//    break;
+//
+//  // move right
+//  case 'd':
+//    move_dot_selection(g_dot_x, g_dot_y + 2);
+//    break;
+//
+//  // rotate counter clock wise
+//  case 'q':
+//    move_line_selection(false);
+//    break;
+//
+//  // rotate clock wise
+//  case 'e':
+//    move_line_selection(true);
+//    break;
+//
+//  // quit game
+//  case 'k':
+//    g_b_in_game = 0;
+//    break;
+//
+//  // lock in move
+//  case 'l':
+//    b_can_move_again = submit_selected_line();
+//
+//    // change players of no boxes are formed
+//    if (!b_can_move_again) {
+//      current_player_id += 1;
+//      current_player_id %= 2;
+//    }
+//    break;
+//  }
+
 }
 
 /*
