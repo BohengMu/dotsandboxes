@@ -20,6 +20,8 @@
 //input states
 extern volatile enum EncoderState g_encoder_state;
 extern volatile enum ButtonState g_button_state;
+extern volatile enum JoystickState g_joystick_state;
+
 //player infomation
 extern struct Player g_players[2];
 
@@ -80,27 +82,52 @@ void process_move(char move)
   //TODO: take a snapshot of the
   bool b_can_move_again;
 
-  //take a snapshor
+  //take a snapshot
   enum EncoderState encoder_state_copy = g_encoder_state;
+  enum JoystickState joystick_state_copy = g_joystick_state;
   enum ButtonState button_pressed_copy = g_button_state;
 
   //reset input state
-
-
+  g_joystick_state = Zero;
   g_button_state = NotPressed;
+  g_encoder_state = Neutral;
 
+  //process joystic input
+  switch(joystick_state_copy)
+  {
+      case Up://up case
+          move_dot_selection(g_dot_x - 2, g_dot_y);
+          return;
+
+      case Down://down case
+          move_dot_selection(g_dot_x + 2, g_dot_y);
+          return;
+
+      case Left://left case
+          move_dot_selection(g_dot_x, g_dot_y - 2);
+          return;
+
+      case Right://right case
+          move_dot_selection(g_dot_x, g_dot_y + 2);
+          return;
+
+      case Zero://neutral case
+          break;
+  }
+
+  //process encoder state
   switch(encoder_state_copy)
   {
   // rotate counter clock wise
     case CounterClockwise:
       move_line_selection(false);
-      g_encoder_state = Neutral;
+      //g_encoder_state = Neutral;
       return;
 
     // rotate clock wise
     case Clockwise:
       move_line_selection(true);
-      g_encoder_state = Neutral;
+      //g_encoder_state = Neutral;
       return;
 
     //no inputs detected
@@ -108,6 +135,7 @@ void process_move(char move)
         break;
   }
 
+  //process button input
   if (button_pressed_copy != NotPressed)
   {
       b_can_move_again = submit_selected_line();
@@ -117,58 +145,9 @@ void process_move(char move)
           current_player_id += 1;
           current_player_id %= 2;
       }
+      //g_button_pressed = 0;
       return;
   }
-//
-//  switch (move)
-//  {
-//  // move up
-//  case 'w':
-//    move_dot_selection(g_dot_x - 2, g_dot_y);
-//    break;
-//
-//  // move down
-//  case 's':
-//    move_dot_selection(g_dot_x + 2, g_dot_y);
-//    break;
-//
-//  // move left
-//  case 'a':
-//    move_dot_selection(g_dot_x, g_dot_y - 2);
-//    break;
-//
-//  // move right
-//  case 'd':
-//    move_dot_selection(g_dot_x, g_dot_y + 2);
-//    break;
-//
-//  // rotate counter clock wise
-//  case 'q':
-//    move_line_selection(false);
-//    break;
-//
-//  // rotate clock wise
-//  case 'e':
-//    move_line_selection(true);
-//    break;
-//
-//  // quit game
-//  case 'k':
-//    g_b_in_game = 0;
-//    break;
-//
-//  // lock in move
-//  case 'l':
-//    b_can_move_again = submit_selected_line();
-//
-//    // change players of no boxes are formed
-//    if (!b_can_move_again) {
-//      current_player_id += 1;
-//      current_player_id %= 2;
-//    }
-//    break;
-//  }
-
 }
 
 /*
