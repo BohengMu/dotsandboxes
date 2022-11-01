@@ -5,7 +5,7 @@
  *      Author: James Tsai
  */
 #include "RotaryEncoder.h"
-#include "Defines.h"
+#include "defines.h"
 #include "msp.h"
 #include "driverlib.h"
 #include <stdio.h>

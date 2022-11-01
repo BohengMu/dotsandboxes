@@ -40,15 +40,5 @@ void configure_push_button()
  *
  */
 
-void PORT1_IRQHandler(void){
-
-    //if interrupt on P1.5
-    if(P1->IFG & BIT5){
-        g_button_pressed = 1;
-
-        //reset interrupt flag for P1.5
-        P1->IFG &= ~0x20;
-    }
-}
 
 //end of file

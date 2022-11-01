@@ -12,4 +12,7 @@
 void configure_push_button(void);
 extern volatile bool g_button_pressed;
 
+//state variables for pushbutton state
+enum ButtonState{NotPressed, Pressed};
+
 #endif /* PUSHBUTTON_H_ */

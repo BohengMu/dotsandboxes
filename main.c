@@ -38,8 +38,7 @@ void main(void)
     configure_push_button();
     Clock_Init48MHz();
     //initializing game simulation and user inputs
-    //configures adc to read in joystick input, see Joystick.c
-    configure_ADC();
+
 
     //configure encoder input, see RotaryEncoder.c
     configure_encoder();
