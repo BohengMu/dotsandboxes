@@ -19,7 +19,7 @@
 #include "driverlib.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "InputInterrupt.h"
 
 /**
  * main.c runs all the initialization code for user inputs and game simulation.
@@ -33,8 +33,7 @@ void main(void)
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
 
     //initializing taken out for now to test Boheng's code
-    //configure_ADC();
-    //configure_encoder();
+    configure_systick();
     configure_push_button();
     Clock_Init48MHz();
     //initializing game simulation and user inputs
@@ -56,7 +55,7 @@ void main(void)
     select_dot(2, 2);
 
     //print initial game state
-    //print_board();
+    print_board();
 
     while (true) {
         //get input as from keyboard as a simulation
@@ -68,7 +67,11 @@ void main(void)
 
         // update the output state
         //print_board();
-        Clock_Delay1us(10000);
+        int i = 700000;
+        while(i){
+            Clock_Delay1us(4294967295);
+            i--;
+        }
     }
     return;
 }

@@ -59,7 +59,8 @@ enum JoystickState check_ADC_state()
 {
     if(!ADC14_CONVERSION_FINISHED)
     {
-        g_joystick_state = Zero;
+        return;
+        //g_joystick_state = Zero;
     }
     else
     {

@@ -24,16 +24,17 @@ void configure_systick(void)
 {
     //configures adc to read in joystick input, see Joystick.c
     configure_ADC();
-    SysTick_enableModule();
-    SysTick_setPeriod(30);
+    SysTick_setPeriod(48000);
     SysTick_enableInterrupt();
     Interrupt_enableMaster();
+    ADC14_CONVERSION_START;
+    SysTick_enableModule();
 }
 
 void SysTick_Handler(void)
 {
     check_ADC_state();
-    if(InterruptCounter == 200){
+    if(InterruptCounter == 5){
         check_button_state();
         InterruptCounter = 0;
     }

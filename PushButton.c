@@ -27,11 +27,11 @@ void configure_push_button()
     P1->DIR &= ~BIT5; //configure port 1.5 as input
     P1->REN |= BIT5; //enable pull up resistors on Port 1.5
     P1->OUT |= BIT5; //select pull up resistor on Port 1.5
-    P1->IES |= BIT5; //interrupt on high to low transition
+    //P1->IES |= BIT5; //interrupt on high to low transition
     P1->IFG = 0x00; //clear all interrupt flags
-    P1->IE |= BIT5; //enable interrupt for P1.5
-    Interrupt_enableInterrupt(INT_PORT1); //enable Port 1 interrupt on NVIC
-    Interrupt_setPriority(INT_PORT1, 1); //set priority lower than encoder
+    //P1->IE |= BIT5; //enable interrupt for P1.5
+    //Interrupt_enableInterrupt(INT_PORT1); //enable Port 1 interrupt on NVIC
+    //Interrupt_setPriority(INT_PORT1, 1); //set priority lower than encoder
 }
 
 /*
@@ -50,10 +50,12 @@ enum ButtonState check_button_state()
      */
     //if P1.5 is active low
     if(P1->IN & BIT5){
-        g_button_state = Pressed;
-    }
-    else{
         g_button_state = NotPressed;
+        return g_button_state;
+    }
+    if(!(P1->IN & BIT5)){
+        g_button_state = Pressed;
+        return g_button_state;
     }
 }
 
