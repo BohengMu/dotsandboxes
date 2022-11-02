@@ -89,22 +89,22 @@ void print_board()
   printf("%s\n", dotrow);
 
   //printing led representation
-  printf("--------------led of size %i x %i--------------\n", LED_MATRIX_SIZE, LED_MATRIX_SIZE);
-  int led_row, led_column;
-  for(led_row = 0; led_row < LED_MATRIX_SIZE; led_row++)
-  {
-    char row[LED_MATRIX_SIZE+1];
-
-    //add terminal character
-    row[LED_MATRIX_SIZE] = '\0';
-
-    // prepare the row
-    for (led_column = 0; led_column < LED_MATRIX_SIZE; led_column++){
-
-      row[led_column] = 48 + led_matrix[led_row][led_column];
-    }
-    printf("%s\n", row);
-  }
+//  printf("--------------led of size %i x %i--------------\n", LED_MATRIX_SIZE, LED_MATRIX_SIZE);
+//  int led_row, led_column;
+//  for(led_row = 0; led_row < LED_MATRIX_SIZE; led_row++)
+//  {
+//    char row[LED_MATRIX_SIZE+1];
+//
+//    //add terminal character
+//    row[LED_MATRIX_SIZE] = '\0';
+//
+//    // prepare the row
+//    for (led_column = 0; led_column < LED_MATRIX_SIZE; led_column++){
+//
+//      row[led_column] = 48 + led_matrix[led_row][led_column];
+//    }
+//    printf("%s\n", row);
+//  }
 }
 
 /*

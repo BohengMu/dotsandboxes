@@ -23,7 +23,7 @@ extern volatile enum ButtonState g_button_state;
 extern volatile enum JoystickState g_joystick_state;
 
 //player infomation
-extern struct Player g_players[2];
+extern volatile struct Player g_players[2];
 
 //game state board
 extern volatile int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
@@ -41,7 +41,7 @@ int g_dot_x = 2, g_dot_y = 2;
 int g_line_x = 0, g_line_y = 0;
 
 // who is currently moving
-int current_player_id = 0;
+volatile int current_player_id = 0;
 
 //wheter a line is hovered
 bool hover_line = 0;
@@ -49,6 +49,11 @@ bool hover_line = 0;
 //which direction is the line pointing
 int line_direction = -1;
 
+//prints player score
+static void print_score(){
+    printf("Player 1 score: %i, Player 2 Score: %i \n", g_players[0].score, g_players[1].score);
+    printf("Player %i turn \n", current_player_id + 1);
+}
 
 /*
  * gets the console input
@@ -57,9 +62,9 @@ int line_direction = -1;
 char get_console_input()
 {
   char move;
-  printf("Player 1 score: %i, Player 2 : %i \n", g_players[0].score,
-         g_players[1].score);
-  printf("select a move for player %i: ", g_players[current_player_id].ID);
+  //printf("Player 1 score: %i, Player 2 : %i \n", g_players[0].score,
+         //g_players[1].score);
+  //printf("select a move for player %i: ", g_players[current_player_id].ID);
 
   move = getchar();
 
@@ -97,18 +102,27 @@ void process_move(char move)
   {
       case Up://up case
           move_dot_selection(g_dot_x - 2, g_dot_y);
+          print_score();
+          print_board();
+
           return;
 
       case Down://down case
           move_dot_selection(g_dot_x + 2, g_dot_y);
+          print_score();
+          print_board();
           return;
 
       case Left://left case
           move_dot_selection(g_dot_x, g_dot_y - 2);
+          print_score();
+          print_board();
           return;
 
       case Right://right case
           move_dot_selection(g_dot_x, g_dot_y + 2);
+          print_score();
+          print_board();
           return;
 
       case Zero://neutral case
@@ -121,12 +135,16 @@ void process_move(char move)
   // rotate counter clock wise
     case CounterClockwise:
       move_line_selection(false);
+      print_score();
+      print_board();
       //g_encoder_state = Neutral;
       return;
 
     // rotate clock wise
     case Clockwise:
       move_line_selection(true);
+      print_score();
+      print_board();
       //g_encoder_state = Neutral;
       return;
 
@@ -139,7 +157,8 @@ void process_move(char move)
   if (button_pressed_copy != NotPressed)
   {
       b_can_move_again = submit_selected_line();
-
+      print_score();
+      print_board();
       // change players of no boxes are formed
       if (!b_can_move_again) {
           current_player_id += 1;
@@ -161,14 +180,14 @@ bool submit_selected_line()
   // chech if the line can be selected
   if (line_direction == -1)
   {
-    printf("Cannot select move, no line is selected\n");
+    //printf("Cannot select move, no line is selected\n");
     return true;
   }
 
   // check if the move have been selected
   if (g_board[g_line_x][g_line_y] == 3)
   {
-    printf("Cannot select a selected move!\n");
+    //printf("Cannot select a selected move!\n");
     return true;
   }
 
@@ -257,7 +276,7 @@ void move_dot_selection(int dot_x, int dot_y)
 {
   // check if dot is within bounds
   if (!valid_move(dot_x, dot_y)) {
-    printf("Cannot select move, out of bounds \n");
+    //printf("Cannot select move, out of bounds \n");
     return;
   } else {
     // remove current selections
@@ -355,7 +374,7 @@ bool check_box(int box_x, int box_y)
     }
     if (count == 4)
     {
-      printf("!!!!!!!!!!!!!got a box!!!!!!!!!!!!!\n");
+      //printf("!!!!!!!!!!!!!got a box!!!!!!!!!!!!!\n");
       return true;
     }
   }

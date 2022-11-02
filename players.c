@@ -9,7 +9,7 @@
 
 struct Player player2;
 struct Player player1;
-struct Player g_players[2];
+volatile struct Player g_players[2];
 
 /*
  * initialize the global players

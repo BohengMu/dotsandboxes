@@ -9,8 +9,8 @@
 #define DEFINES_H_
 
 
-#define ROWS 10
-#define COLUMNS 10
+#define ROWS 4
+#define COLUMNS 4
 #define LED_MATRIX_SIZE 32
 #define BOX_SIZE ((LED_MATRIX_SIZE-1)/ROWS +1)
 #define INNER_BOX_SIZE (BOX_SIZE - 2)
