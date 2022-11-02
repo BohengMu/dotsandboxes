@@ -33,7 +33,7 @@ void configure_encoder(void)
 
 /*
  * IRQ handler for port 3, which is triggered by the encoder
- * The handler will increment or decrement the variable encoder_count, to be used in the game logic
+ * The handler will set g_encoder_state based on direction of rotation, to be used by game logic
  * to determine which direction to draw a line.
  *
  */
@@ -42,11 +42,11 @@ void PORT3_IRQHandler(void)
 {
     if(ENCODER1_A_INTERRUPT)//if P3.6 interrupted on A input
     {
-        if(ENCODER1_B_HIGH) //if B input is high, increment count for clockwise
+        if(ENCODER1_B_HIGH) //if B input is high, set state to counterclockwise
         {
             g_encoder_state =  CounterClockwise;
         }
-        else //if B input is low, decrement count for counterclockwise
+        else //if B input is low, set state to clockwise
         {
             g_encoder_state = Clockwise;
         }

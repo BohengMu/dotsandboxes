@@ -55,14 +55,20 @@ void configure_ADC()
     // enable conversion on ADC
     ADC14->CTL0 |= ADC14_CTL0_ENC;
 }
+
+/*
+ * Interrupt routine in InputInterrupt.c calls this function
+ * If ADC conversion is done, determines what position Joystick is in
+ * Return value is current state of Joystick
+ *
+ */
 enum JoystickState check_ADC_state()
 {
-    if(!ADC14_CONVERSION_FINISHED)
+    if(!ADC14_CONVERSION_FINISHED) //if conversion is not done, stay in current state
     {
         return;
-        //g_joystick_state = Zero;
     }
-    else
+    else //otherwise, set joystick state based on ADC conversion values
     {
         if(JOYSTICK_UP)
         {
@@ -85,7 +91,7 @@ enum JoystickState check_ADC_state()
             g_joystick_state = Zero;
         }
 
-        ADC14_CONVERSION_START;
+        ADC14_CONVERSION_START; //start another conversion
     }
     return g_joystick_state;
 }
