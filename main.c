@@ -67,6 +67,7 @@ void main(void)
 
         // update the output state
         //print_board();
+        //delay for a certain amount of time
         int i = 700000;
         while(i){
             Clock_Delay1us(4294967295);
