@@ -48,6 +48,7 @@ enum ButtonState check_button_state()
         g_button_state = NotPressed;
         return g_button_state;
     }
+
     //if P1.5 is active low (pressed)
     if(!(P1->IN & BIT5))
     {

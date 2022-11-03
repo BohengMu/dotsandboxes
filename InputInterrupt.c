@@ -24,7 +24,12 @@ void configure_systick(void)
 {
     //configures adc to read in joystick input, see Joystick.c
     configure_ADC();
+
+    //with a period of 48000, the interrupt is at a period od
+    // 48MHz /48000 = 1 ms
     SysTick_setPeriod(48000);
+
+    //start modules
     SysTick_enableInterrupt();
     Interrupt_enableMaster();
     ADC14_CONVERSION_START; //start an ADC conversion
