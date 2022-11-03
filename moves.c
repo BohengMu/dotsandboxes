@@ -49,7 +49,11 @@ bool hover_line = 0;
 //which direction is the line pointing
 int line_direction = -1;
 
-//prints player score
+/*
+ * prints player score and the
+ * this is needed in the earlier stages of the game
+ * to simulate seven segment output
+ */
 static void print_score(){
     printf("Player 1 score: %i, Player 2 Score: %i \n", g_players[0].score, g_players[1].score);
     printf("Player %i turn \n", current_player_id + 1);
@@ -57,14 +61,12 @@ static void print_score(){
 
 /*
  * gets the console input
- * TODO: get inputs from the ports
+ * this function is needed in the earlier stages of the game
+ * to simulate input signals on the terminal
  */
 char get_console_input()
 {
   char move;
-  //printf("Player 1 score: %i, Player 2 : %i \n", g_players[0].score,
-         //g_players[1].score);
-  //printf("select a move for player %i: ", g_players[current_player_id].ID);
 
   move = getchar();
 
@@ -78,7 +80,8 @@ char get_console_input()
 
 /*
  * process the inputs given
- * can: move the dots, move the lines, select line, and quit the game
+ * can: move the dots, move the lines, select line
+ * TODO: add logic to detect end of game
  */
 void process_move(char move)
 {
