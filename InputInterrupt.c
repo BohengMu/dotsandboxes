@@ -29,8 +29,6 @@ void configure_systick(void)
     // 48MHz /48000 = 1 ms
     SysTick_setPeriod(48000);
 
-
-
     //start modules
     SysTick_enableInterrupt();
     Interrupt_enableMaster();
