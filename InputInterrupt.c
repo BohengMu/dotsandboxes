@@ -47,6 +47,7 @@ void SysTick_Handler(void)
         check_button_state(); //check if button is pressed
         InterruptCounter = 0; //reset InterruptCounter
     }
+
     InterruptCounter++;
 }
 

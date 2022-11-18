@@ -165,7 +165,7 @@ void Clock_Delay1us(uint32_t n){
 // Outputs: none
 void Clock_Delay1ms(uint32_t n){
   while(n){
-    delay(ClockFrequency/9162);   // 1 msec, tuned at 48 MHz
+      Clock_Delay1us(1000);   // 1 msec, tuned at 48 MHz
     n--;
   }
 }

@@ -13,7 +13,6 @@
 #include "RotaryEncoder.h"
 #include "PushButton.h"
 #include "Joystick.h"
-#include "rgbmatrix.h"
 #include "Clock.h"
 #include "spi.h"
 #include "driverlib.h"
@@ -48,8 +47,6 @@ void main(void)
     //set dots to selcted and everyting else to zero
     clear_board();
 
-    //write initial dots to led
-    write_initial_dots();
 
     //select top left dot as begining move
     select_dot(2, 2);
@@ -63,16 +60,13 @@ void main(void)
         //char move = get_console_input();
 
         // process the current input state
+        // 'a' is a place holder for player i nput
         process_move('a');
 
         // update the output state
         //print_board();
         //delay for a certain amount of time
-        int i = 700000;
-        while(i){
-            Clock_Delay1us(4294967295);
-            i--;
-        }
+        Clock_Delay1ms(5);
     }
     return;
 }
