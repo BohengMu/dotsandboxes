@@ -22,8 +22,8 @@ void set_rgb_data(uint8_t rgb1, uint8_t rgb2);
 void latch_on();
 void latch_off();
 void toggle_clock();
-void refresh_board();
-void board_off();
+void refresh_led_board();
+void board_led_off();
 
 
 #endif /* MATRIXDRIVER_H_ */

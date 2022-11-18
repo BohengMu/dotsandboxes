@@ -86,7 +86,7 @@ void toggle_clock()
 
 //refreshboard sequence
 
-void refresh_board(){
+void refresh_led_board(){
     int i, j;
     for(j = 0; j < 16; j++){
         latch_off();
@@ -106,7 +106,7 @@ void refresh_board(){
 
 }
 
-void board_off(){
+void led_board_off(){
     int i, j;
     for(j = 0; j < 16; j++){
         latch_off();

@@ -11,6 +11,7 @@
 #include "moves.h"
 #include "players.h"
 #include "RotaryEncoder.h"
+#include "matrixdriver.h"
 #include "PushButton.h"
 #include "Joystick.h"
 #include "Clock.h"
@@ -40,7 +41,7 @@ void main(void)
 
     //configure encoder input, see RotaryEncoder.c
     configure_encoder();
-
+    init_matrix();
     //initialize player values
     init_players();
 
