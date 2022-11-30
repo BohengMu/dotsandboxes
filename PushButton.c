@@ -10,23 +10,24 @@
 #include <stdbool.h>
 #include "msp.h"
 #include "driverlib.h"
+#include "vector.h"
 
 volatile enum ButtonState g_button_state;
-
-
+//extern vector g_input_vector;
+extern volatile int g_current_input;
 /*
- * Push button is configured on pin 1.5 with pull up resistor.
+ * Push button is configured on pin 4.7 with pull up resistor.
  * Interrupts are triggered on falling edges
  *
  */
 void configure_push_button()
 {
-    P1->SEL0 &= ~BIT5; //set P1 to I/O function
-    P1->SEL1 &= ~BIT5; //set P1 to I/O function
-    P1->DIR &= ~BIT5; //configure port 1.5 as input
-    P1->REN |= BIT5; //enable pull up resistors on Port 1.5
-    P1->OUT |= BIT5; //select pull up resistor on Port 1.5
-    P1->IFG = 0x00; //clear all interrupt flags
+    P5->SEL0 &= ~BIT2; //set P4 to I/O function
+    P5->SEL1 &= ~BIT2; //set P4 to I/O function
+    P5->DIR &= ~BIT2; //configure port 4.7 as input
+    P5->REN |= BIT2; //enable pull up resistors on Port 4.7
+    P5->OUT |= BIT2; //select pull up resistor on Port 4.7
+    P5->IFG = 0x00; //clear all interrupt flags
 }
 
 /*
@@ -43,16 +44,22 @@ enum ButtonState check_button_state()
      *
      */
     //if P1.5 is active high (not pressed)
-    if(P1->IN & BIT5)
+    if(P5->IN & BIT2)
     {
         g_button_state = NotPressed;
         return g_button_state;
     }
 
     //if P1.5 is active low (pressed)
-    if(!(P1->IN & BIT5))
+    if(!(P5->IN & BIT2))
     {
         g_button_state = Pressed;
+        if(g_current_input == 0)
+        {
+            g_current_input = 7;
+        }
+        //g_input_vector.pfVectorAdd(&g_input_vector, "pushed");
+        //printf("ADDED 7\n");
         return g_button_state;
     }
     return g_button_state;

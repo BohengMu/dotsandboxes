@@ -8,12 +8,13 @@
 #include "defines.h"
 #include "msp.h"
 #include "driverlib.h"
-
+#include "vector.h"
 volatile enum JoystickState g_joystick_state;
-
+//extern vector g_input_vector;
+extern volatile int g_current_input;
 /*
  * ADC configuration sets the ADC to take input from the analog joystick, which is currently
- * set to pin 4.7 for y axis and 4.6 for x axis on the Joystick.
+ * set to pin 5.1 for y axis and 5.0 for x axis on the Joystick.
  * Converted values are stored in MEM0 and MEM1, which range between 0 and 16383 based on
  * potentiometer positions.
  *
@@ -46,11 +47,11 @@ void configure_ADC()
     //start conversion address at MEM0 with 14bit resolution
     ADC14->CTL1 = (ADC14_CONVERSION_START_ADDR(0) | ADC14_CTL1_RES__14BIT);
 
-    //map MEM0 to 4.6
-    ADC14->MCTL[0] = ADC14_MCTLN_INCH_6;
+    //map MEM0 to 5.1
+    ADC14->MCTL[0] = ADC14_MCTLN_INCH_4;
 
-    //map MEM1 to 4.7 and set end of sequence
-    ADC14->MCTL[1] = (ADC14_MCTLN_EOS |ADC14_MCTLN_INCH_7);
+    //map MEM1 to 5.0 and set end of sequence
+    ADC14->MCTL[1] = (ADC14_MCTLN_EOS |ADC14_MCTLN_INCH_5);
 
     // enable conversion on ADC
     ADC14->CTL0 |= ADC14_CTL0_ENC;
@@ -73,18 +74,46 @@ enum JoystickState check_ADC_state()
         if(JOYSTICK_UP)
         {
             g_joystick_state = Up;
+            if(g_current_input == 0)
+            {
+                g_current_input = 1;
+            }
+            //g_input_vector.pfVectorAdd(&g_input_vector, "up");
+            //printf("ADDED 1\n");
+
         }
         else if(JOYSTICK_DOWN)
         {
             g_joystick_state = Down;
+            if(g_current_input == 0)
+            {
+                g_current_input = 2;
+            }
+            //g_input_vector.pfVectorAdd(&g_input_vector, "down");
+            //printf("ADDED 2\n");
+
         }
         else if(JOYSTICK_LEFT)
         {
             g_joystick_state = Left;
+            if(g_current_input == 0)
+            {
+                g_current_input = 3;
+            }
+            //g_input_vector.pfVectorAdd(&g_input_vector, "left");
+            //printf("ADDED 3\n");
+
         }
         else if(JOYSTICK_RIGHT)
         {
             g_joystick_state = Right;
+            if(g_current_input == 0)
+            {
+                g_current_input = 4;
+            }
+            //g_input_vector.pfVectorAdd(&g_input_vector, "right");
+            //printf("ADDED 4\n");
+
         }
         else
         {

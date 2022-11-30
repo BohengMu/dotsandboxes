@@ -13,15 +13,18 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "RotaryEncoder.h"
 #include "PushButton.h"
 #include "Joystick.h"
+#include "vector.h"
 
 //input states
 extern volatile enum EncoderState g_encoder_state;
 extern volatile enum ButtonState g_button_state;
 extern volatile enum JoystickState g_joystick_state;
-
+//extern vector g_input_vector;
+extern volatile int g_current_input;
 //player infomation
 extern volatile struct Player g_players[2];
 
@@ -101,64 +104,54 @@ void process_move(char move)
   g_encoder_state = Neutral;
 
   //process joystic input
-  switch(joystick_state_copy)
+
+  if(g_current_input == 1)
   {
-      case Up://up case
-          move_dot_selection(g_dot_x - 2, g_dot_y);
-          print_score();
-          print_board();
-
-          return;
-
-      case Down://down case
-          move_dot_selection(g_dot_x + 2, g_dot_y);
-          print_score();
-          print_board();
-          return;
-
-      case Left://left case
-          move_dot_selection(g_dot_x, g_dot_y - 2);
-          print_score();
-          print_board();
-          return;
-
-      case Right://right case
-          move_dot_selection(g_dot_x, g_dot_y + 2);
-          print_score();
-          print_board();
-          return;
-
-      case Zero://neutral case
-          break;
-  }
-
-  //process encoder state
-  switch(encoder_state_copy)
-  {
-  // rotate counter clock wise
-    case CounterClockwise:
-      move_line_selection(false);
+      printf("JOYSTICK UP");
+      move_dot_selection(g_dot_x - 2, g_dot_y);
       print_score();
       print_board();
-      //g_encoder_state = Neutral;
-      return;
-
-    // rotate clock wise
-    case Clockwise:
+  }
+  else if(g_current_input == 2)
+  {
+      printf("JOYSTICK DOWN");
+      move_dot_selection(g_dot_x + 2, g_dot_y);
+      print_score();
+      print_board();
+  }
+  else if(g_current_input == 3)
+  {
+      printf("JOYSTICK LEFT");
+      move_dot_selection(g_dot_x, g_dot_y - 2);
+      print_score();
+      print_board();
+  }
+  else if(g_current_input == 4)
+  {
+      printf("JOYSTICK RIGHT");
+      move_dot_selection(g_dot_x, g_dot_y + 2);
+      print_score();
+      print_board();
+  }
+  else if(g_current_input == 5)
+  {
+      printf("ENCODER CLOCKWISE");
       move_line_selection(true);
       print_score();
       print_board();
-      //g_encoder_state = Neutral;
-      return;
-
-    //no inputs detected
-    case Neutral:
-        break;
+      g_encoder_state = Neutral;
   }
-
-  //process button input
-  if (button_pressed_copy != NotPressed)
+  else if(g_current_input == 6)
   {
+      printf("ENCODER COUNTERCLOCKWISE");
+      move_line_selection(false);
+      print_score();
+      print_board();
+      g_encoder_state = Neutral;
+  }
+  else if(g_current_input == 7)
+  {
+      printf("BUTTON PRESSED");
       b_can_move_again = submit_selected_line();
       print_score();
       print_board();
@@ -168,8 +161,155 @@ void process_move(char move)
           current_player_id %= 2;
       }
       //g_button_pressed = 0;
-      return;
   }
+  g_current_input = 0;
+  return;
+//  printf("VECTOR CONTENTS:\n ");
+//  int i =0;
+//  for (i = 0; i < g_input_vector.pfVectorTotal(&g_input_vector); i++)
+//  {
+//      printf("%s", (char*)g_input_vector.pfVectorGet(&g_input_vector, i));
+//  }
+//  if(strcmp(g_input_vector.pfVectorGet(&g_input_vector, 0), "up") == 0)
+//  {
+//      printf("JOYSTICK UP");
+//      move_dot_selection(g_dot_x - 2, g_dot_y);
+//      print_score();
+//      print_board();
+//      return;
+//  }
+//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)2)
+//  {
+//      printf("JOYSTICK DOWN");
+//      move_dot_selection(g_dot_x + 2, g_dot_y);
+//      print_score();
+//      print_board();
+//      return;
+//  }
+//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)3)
+//  {
+//      printf("JOYSTICK LEFT");
+//      move_dot_selection(g_dot_x, g_dot_y - 2);
+//      print_score();
+//      print_board();
+//      return;
+//  }
+//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)4)
+//  {
+//      printf("JOYSTICK RIGHT");
+//      move_dot_selection(g_dot_x, g_dot_y + 2);
+//      print_score();
+//      print_board();
+//      return;
+//  }
+//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)5)
+//  {
+//      printf("ENCODER CLOCKWISE");
+//      move_line_selection(true);
+//      print_score();
+//      print_board();
+//      g_encoder_state = Neutral;
+//      return;
+//  }
+//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)6)
+//  {
+//      printf("ENCODER COUNTERCLOCKWISE");
+//      move_line_selection(false);
+//      print_score();
+//      print_board();
+//      g_encoder_state = Neutral;
+//      return;
+//  }
+//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)7)
+//  {
+//      printf("BUTTON PRESSED");
+//      b_can_move_again = submit_selected_line();
+//      print_score();
+//      print_board();
+//      // change players of no boxes are formed
+//      if (!b_can_move_again) {
+//          current_player_id += 1;
+//          current_player_id %= 2;
+//      }
+//      //g_button_pressed = 0;
+//      return;
+//  }
+//  int j = 0;
+//  for (j = 0; j < g_input_vector.pfVectorTotal(&g_input_vector); j++)
+//  {
+//      g_input_vector.pfVectorDelete(&g_input_vector, 0);
+//  }
+
+
+//  switch(joystick_state_copy)
+//  {
+//      case Up://up case
+//          move_dot_selection(g_dot_x - 2, g_dot_y);
+//          print_score();
+//          print_board();
+//
+//          return;
+//
+//      case Down://down case
+//          move_dot_selection(g_dot_x + 2, g_dot_y);
+//          print_score();
+//          print_board();
+//          return;
+//
+//      case Left://left case
+//          move_dot_selection(g_dot_x, g_dot_y - 2);
+//          print_score();
+//          print_board();
+//          return;
+//
+//      case Right://right case
+//          move_dot_selection(g_dot_x, g_dot_y + 2);
+//          print_score();
+//          print_board();
+//          return;
+//
+//      case Zero://neutral case
+//          break;
+//  }
+//
+//  //process encoder state
+//  switch(encoder_state_copy)
+//  {
+//  // rotate counter clock wise
+//    case CounterClockwise:
+//      move_line_selection(false);
+//      print_score();
+//      print_board();
+//      g_encoder_state = Neutral;
+//      return;
+//
+//    // rotate clock wise
+//    case Clockwise:
+//      move_line_selection(true);
+//      print_score();
+//      print_board();
+//      g_encoder_state = Neutral;
+//      return;
+//
+//    //no inputs detected
+//    case Neutral:
+//        break;
+//  }
+//
+//  //process button input
+//  if (button_pressed_copy != NotPressed)
+//  {
+//      b_can_move_again = submit_selected_line();
+//      print_score();
+//      print_board();
+//      // change players of no boxes are formed
+//      if (!b_can_move_again) {
+//          current_player_id += 1;
+//          current_player_id %= 2;
+//      }
+//      //g_button_pressed = 0;
+//      return;
+//  }
 }
 
 /*

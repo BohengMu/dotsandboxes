@@ -16,4 +16,5 @@ void configure_encoder(void);
 //state variables for Encoder State;
 enum EncoderState{Neutral, Clockwise, CounterClockwise};
 
+enum EncoderState check_encoder_state(void);
 #endif /* ROTARYENCODER_H_ */
