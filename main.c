@@ -11,9 +11,9 @@
 #include "moves.h"
 #include "players.h"
 #include "RotaryEncoder.h"
+#include "matrixdriver.h"
 #include "PushButton.h"
 #include "Joystick.h"
-#include "rgbmatrix.h"
 #include "Clock.h"
 #include "spi.h"
 #include "driverlib.h"
@@ -42,15 +42,13 @@ void main(void)
 
     //configure encoder input, see RotaryEncoder.c
     configure_encoder();
-
+    init_matrix();
     //initialize player values
     init_players();
 
     //set dots to selcted and everyting else to zero
     clear_board();
 
-    //write initial dots to led
-    write_initial_dots();
 
     //select top left dot as begining move
     select_dot(2, 2);
@@ -64,10 +62,16 @@ void main(void)
         //char move = get_console_input();
 
         // process the current input state
+<<<<<<< HEAD
+=======
+        // 'a' is a place holder for player i nput
+        process_move('a');
+>>>>>>> b86c0e6f336b0ba00f5b49f9f82b58195a1e2a3f
 
         // update the output state
         //print_board();
         //delay for a certain amount of time
+<<<<<<< HEAD
         int i = 70000;
         while(i){
             process_move('a');
@@ -75,6 +79,9 @@ void main(void)
             i--;
         }
 
+=======
+        Clock_Delay1ms(5);
+>>>>>>> b86c0e6f336b0ba00f5b49f9f82b58195a1e2a3f
     }
     return;
 }

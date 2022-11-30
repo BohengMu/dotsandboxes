@@ -13,6 +13,7 @@
 #include "RotaryEncoder.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "matrixdriver.h"
 #include "defines.h"
 
 //counter for number of interrupts occurred
@@ -45,9 +46,15 @@ void configure_systick(void)
 void SysTick_Handler(void)
 {
     check_ADC_state(); //check joystick values, see Joystick.c
-    if(InterruptCounter == 5){ //on every 5th interrupt (5 ms)
+    if(InterruptCounter % 5 == 0){ //on every 5th interrupt (5 ms)
         check_button_state(); //check if button is pressed
+<<<<<<< HEAD
         //check_encoder_state(); //check if encoder is moved
+=======
+    }
+    if(InterruptCounter % 10 == 0){ //on every 5th interrupt (5 ms)
+        refresh_led_board(); //check if button is pressed
+>>>>>>> b86c0e6f336b0ba00f5b49f9f82b58195a1e2a3f
         InterruptCounter = 0; //reset InterruptCounter
     }
     InterruptCounter++;

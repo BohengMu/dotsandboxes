@@ -15,7 +15,7 @@
 volatile int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
 
 //led board
-volatile int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
+volatile uint8_t g_led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
 
 //game state prin representations
 char verticle_edges[4] = {' ', '-', '^', 'x'};
@@ -29,7 +29,7 @@ char boxes[3] = {' ', '1', '2'};
 void clear_board()
 {
   //set led to all zeros
-  memset(led_matrix, 0, LED_MATRIX_SIZE * LED_MATRIX_SIZE * sizeof(int));
+  memset(g_led_matrix, 0, LED_MATRIX_SIZE * LED_MATRIX_SIZE * sizeof(uint8_t));
 
   //set game state to zeros
   int i, j;
@@ -115,15 +115,15 @@ void print_board()
  * 2, 3 - played edge, 4 - available edge, 5 - unavailable, edge 6 - player 1 box, 7
  * - player 2 box
  */
-uint8_t mock_matrixrgb_write_pixel(int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE], uint16_t x, uint16_t y,
-                                   uint16_t color)
+uint8_t matrixrgb_write_pixel(uint16_t x, uint16_t y,
+                              uint8_t color)
 {
 
   if ((x >= LED_MATRIX_SIZE) || (y >= LED_MATRIX_SIZE))
   {
     return 1;
   }
-  led_matrix[x][y] = color;
+  g_led_matrix[x][y] = color;
   return 0;
 }
 
@@ -136,7 +136,7 @@ uint8_t mock_matrixrgb_write_pixel(int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SI
 uint8_t write_led_edge(uint16_t x, uint16_t y, uint16_t status)
 {
   // determining color
-  uint16_t color = status + 2;
+  uint8_t color = status + 2;
 
   // unselected edge should be off
   if (status == 0)
@@ -155,7 +155,7 @@ uint8_t write_led_edge(uint16_t x, uint16_t y, uint16_t status)
     uint16_t edge_offset;
     for (edge_offset = 0; edge_offset < INNER_BOX_SIZE; edge_offset++)
     {
-      mock_matrixrgb_write_pixel(led_matrix, edge_base_x,
+      matrixrgb_write_pixel(edge_base_x,
                                  edge_base_y + edge_offset, color);
     }
     return 0;
@@ -169,7 +169,7 @@ uint8_t write_led_edge(uint16_t x, uint16_t y, uint16_t status)
     uint16_t edge_offset;
     for (edge_offset = 0; edge_offset < INNER_BOX_SIZE; edge_offset++)
     {
-      mock_matrixrgb_write_pixel(led_matrix, edge_base_x + edge_offset,
+      matrixrgb_write_pixel(edge_base_x + edge_offset,
                                  edge_base_y, color);
     }
     return 0;
@@ -189,7 +189,7 @@ uint8_t write_led_box(uint16_t x, uint16_t y, uint16_t status)
   uint16_t box_base_y = 1 + (((y - 1) / 2) * (INNER_BOX_SIZE + 1));
 
   // determining color
-  uint16_t color = status + 5;
+  uint8_t color = status + 5;
 
   // unselected box should have no color
   if (status == 0)
@@ -206,7 +206,7 @@ uint8_t write_led_box(uint16_t x, uint16_t y, uint16_t status)
       // calculate led coords
       uint16_t led_y = y_offset + box_base_y;
       uint16_t led_x = x_offset + box_base_x;
-      mock_matrixrgb_write_pixel(led_matrix, x_offset + led_x, led_y,
+      matrixrgb_write_pixel(x_offset + led_x, led_y,
                                  color);
     }
   }
@@ -227,7 +227,7 @@ uint8_t write_led_dot(uint16_t x, uint16_t y, uint16_t status)
   uint16_t color = status + 1;
 
   // writing the actual pixels
-  mock_matrixrgb_write_pixel(led_matrix, led_dot_x, led_dot_y, color);
+  matrixrgb_write_pixel(led_dot_x, led_dot_y, color);
   return 0;
 }
 
@@ -248,7 +248,7 @@ void write_initial_dots()
       uint16_t led_dot_y = (dot_y * (BOX_SIZE - 1));
 
       //color hard set to 1
-      mock_matrixrgb_write_pixel(led_matrix, led_dot_x, led_dot_y, 1);
+      matrixrgb_write_pixel(led_dot_x, led_dot_y, 1);
     }
   }
 }
