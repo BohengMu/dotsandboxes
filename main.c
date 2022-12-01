@@ -53,7 +53,6 @@ void main(void)
     select_dot(2, 2);
 
     //print initial game state
-    print_board();
     int i;
     while (true) {
         //get input as from keyboard as a simulation

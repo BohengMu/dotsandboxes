@@ -107,45 +107,45 @@ void process_move(char move)
 
   if(g_current_input == 1)
   {
-      printf("JOYSTICK UP");
+      //printf("JOYSTICK UP");
       move_dot_selection(g_dot_x - 2, g_dot_y);
 
   }
   else if(g_current_input == 2)
   {
-      printf("JOYSTICK DOWN");
+      //printf("JOYSTICK DOWN");
       move_dot_selection(g_dot_x + 2, g_dot_y);
 
   }
   else if(g_current_input == 3)
   {
-      printf("JOYSTICK LEFT");
+      //printf("JOYSTICK LEFT");
       move_dot_selection(g_dot_x, g_dot_y - 2);
 
   }
   else if(g_current_input == 4)
   {
-      printf("JOYSTICK RIGHT");
+      //printf("JOYSTICK RIGHT");
       move_dot_selection(g_dot_x, g_dot_y + 2);
 
   }
   else if(g_current_input == 5)
   {
-      printf("ENCODER CLOCKWISE");
+      //printf("ENCODER CLOCKWISE");
       move_line_selection(true);
 
       g_encoder_state = Neutral;
   }
   else if(g_current_input == 6)
   {
-      printf("ENCODER COUNTERCLOCKWISE");
+      //printf("ENCODER COUNTERCLOCKWISE");
       move_line_selection(false);
 
       g_encoder_state = Neutral;
   }
   else if(g_current_input == 7)
   {
-      printf("BUTTON PRESSED");
+      //printf("BUTTON PRESSED");
       b_can_move_again = submit_selected_line();
 
       // change players of no boxes are formed
