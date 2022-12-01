@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include "msp.h"
 #include "driverlib.h"
-#include "vector.h"
+
 
 volatile enum ButtonState g_button_state;
 //extern vector g_input_vector;

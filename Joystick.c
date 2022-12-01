@@ -8,7 +8,7 @@
 #include "defines.h"
 #include "msp.h"
 #include "driverlib.h"
-#include "vector.h"
+
 volatile enum JoystickState g_joystick_state;
 //extern vector g_input_vector;
 extern volatile int g_current_input;

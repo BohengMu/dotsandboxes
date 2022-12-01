@@ -15,7 +15,7 @@
 #include <stdint.h>
 
 
-void clear_board();
+void init_board();
 void print_board();
 
 uint8_t matrixrgb_write_pixel (uint16_t x, uint16_t y, uint8_t color );

@@ -10,7 +10,7 @@
 #include "driverlib.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "vector.h"
+
 
 volatile enum EncoderState g_encoder_state = Neutral;
 //extern vector g_input_vector;

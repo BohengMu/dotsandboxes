@@ -20,14 +20,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "InputInterrupt.h"
-#include "vector.h"
+
 
 /**
  * main.c runs all the initialization code for user inputs and game simulation.
  * while loop in main continuously runs ADC conversions
  *
  */
-extern vector g_input_vector;
 
 void main(void)
 {
@@ -38,7 +37,7 @@ void main(void)
     configure_push_button();
     Clock_Init48MHz();
     //initializing game simulation and user inputs
-    vector_init(&g_input_vector);
+
 
     //configure encoder input, see RotaryEncoder.c
     configure_encoder();
@@ -47,7 +46,7 @@ void main(void)
     init_players();
 
     //set dots to selcted and everyting else to zero
-    clear_board();
+    init_board();
 
 
     //select top left dot as begining move
@@ -55,33 +54,18 @@ void main(void)
 
     //print initial game state
     print_board();
-
+    int i;
     while (true) {
         //get input as from keyboard as a simulation
         // will be done automatically in the back ground
         //char move = get_console_input();
 
         // process the current input state
-<<<<<<< HEAD
-=======
-        // 'a' is a place holder for player i nput
         process_move('a');
->>>>>>> b86c0e6f336b0ba00f5b49f9f82b58195a1e2a3f
 
-        // update the output state
-        //print_board();
-        //delay for a certain amount of time
-<<<<<<< HEAD
-        int i = 70000;
-        while(i){
-            process_move('a');
-            Clock_Delay1us(480000);
-            i--;
+        for(i= 0 ; i < 200; i++){
+            refresh_led_board();
         }
-
-=======
-        Clock_Delay1ms(5);
->>>>>>> b86c0e6f336b0ba00f5b49f9f82b58195a1e2a3f
     }
     return;
 }

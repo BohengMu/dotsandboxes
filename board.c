@@ -26,7 +26,7 @@ char boxes[3] = {' ', '1', '2'};
 /*
  * Reconfigure the board to all zeros
  */
-void clear_board()
+void init_board()
 {
   //set led to all zeros
   memset(g_led_matrix, 0, LED_MATRIX_SIZE * LED_MATRIX_SIZE * sizeof(uint8_t));
@@ -37,6 +37,11 @@ void clear_board()
     for (j = 0; j < 2 * COLUMNS + 1; j++) {
       g_board[i][j] = 0;
     }
+  }
+  for(i = 0; i < ROWS + 1; i ++){
+      for(j = 0;j< COLUMNS + 1; j ++){
+          write_led_dot(i*2, j*2, 0);
+      }
   }
 }
 
@@ -206,7 +211,7 @@ uint8_t write_led_box(uint16_t x, uint16_t y, uint16_t status)
       // calculate led coords
       uint16_t led_y = y_offset + box_base_y;
       uint16_t led_x = x_offset + box_base_x;
-      matrixrgb_write_pixel(x_offset + led_x, led_y,
+      matrixrgb_write_pixel(led_x, led_y,
                                  color);
     }
   }
