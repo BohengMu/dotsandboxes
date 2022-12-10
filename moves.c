@@ -17,7 +17,6 @@
 #include "RotaryEncoder.h"
 #include "PushButton.h"
 #include "Joystick.h"
-#include "vector.h"
 
 //input states
 extern volatile enum EncoderState g_encoder_state;

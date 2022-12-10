@@ -10,7 +10,6 @@
 #include <stdbool.h>
 #include "msp.h"
 #include "driverlib.h"
-#include "vector.h"
 
 volatile enum ButtonState g_button_state;
 //extern vector g_input_vector;
@@ -35,6 +34,7 @@ void configure_push_button()
  * Handler will set g_button_state to Pressed or NotPressed based on state.
  * Return value is current state of button.
  *
+ * Input Queue: Set g_current_input to 7 if pressed
  */
 enum ButtonState check_button_state()
 {
@@ -43,14 +43,14 @@ enum ButtonState check_button_state()
      * Handler will set button_pressed to 1 if button is pressed, otherwise 0
      *
      */
-    //if P1.5 is active high (not pressed)
+    //if P5.2 is active high (not pressed)
     if(P5->IN & BIT2)
     {
         g_button_state = NotPressed;
         return g_button_state;
     }
 
-    //if P1.5 is active low (pressed)
+    //if P5.2 is active low (pressed)
     if(!(P5->IN & BIT2))
     {
         g_button_state = Pressed;
@@ -58,8 +58,6 @@ enum ButtonState check_button_state()
         {
             g_current_input = 7;
         }
-        //g_input_vector.pfVectorAdd(&g_input_vector, "pushed");
-        //printf("ADDED 7\n");
         return g_button_state;
     }
     return g_button_state;

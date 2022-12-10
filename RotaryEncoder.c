@@ -10,7 +10,6 @@
 #include "driverlib.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "vector.h"
 
 volatile enum EncoderState g_encoder_state = Neutral;
 //extern vector g_input_vector;
@@ -36,11 +35,12 @@ void configure_encoder(void)
  * IRQ handler for encoder, which is triggered every 5 ms by InputInterrupt.c
  * The handler will set g_encoder_state based on direction of rotation, to be used by game logic
  * to determine which direction to draw a line.
+ * Inpue Queue: Set g_current_input to 6 if Counterclockwise, 5 is clockwise
  *
  */
 void PORT3_IRQHandler(void)
 {
-    if(ENCODER1_B_INTERRUPT)
+    if(ENCODER1_B_INTERRUPT)// if B interrupt, check pin values
     {
         if(GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN7) == 0)
         {
@@ -49,7 +49,6 @@ void PORT3_IRQHandler(void)
             {
                 g_current_input = 6;
             }
-            //g_input_vector.pfVectorAdd(&g_input_vector, "counterclockwise");
         }
         else
         {
@@ -60,7 +59,7 @@ void PORT3_IRQHandler(void)
             }
         }
     }
-    else if(ENCODER1_A_INTERRUPT) //|| (ENCODER1_A_HIGH && !(ENCODER1_B_HIGH)))//if P3.6 interrupted on A input or if 3.6 is high
+    else if(ENCODER1_A_INTERRUPT) //if P3.6 interrupted on A input, check input values
     {
         if(GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN5) == 0)
         {
@@ -69,7 +68,6 @@ void PORT3_IRQHandler(void)
             {
                 g_current_input = 5;
             }
-            //g_input_vector.pfVectorAdd(&g_input_vector, "counterclockwise");
         }
         else
         {

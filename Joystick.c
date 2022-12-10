@@ -8,7 +8,6 @@
 #include "defines.h"
 #include "msp.h"
 #include "driverlib.h"
-#include "vector.h"
 volatile enum JoystickState g_joystick_state;
 //extern vector g_input_vector;
 extern volatile int g_current_input;
@@ -62,6 +61,7 @@ void configure_ADC()
  * If ADC conversion is done, determines what position Joystick is in
  * Return value is current state of Joystick
  *
+ * Input Queue: g_current_input: Up is 1, Down is 2, Left is 3, Right is 4
  */
 enum JoystickState check_ADC_state()
 {
@@ -78,9 +78,6 @@ enum JoystickState check_ADC_state()
             {
                 g_current_input = 1;
             }
-            //g_input_vector.pfVectorAdd(&g_input_vector, "up");
-            //printf("ADDED 1\n");
-
         }
         else if(JOYSTICK_DOWN)
         {
@@ -89,8 +86,6 @@ enum JoystickState check_ADC_state()
             {
                 g_current_input = 2;
             }
-            //g_input_vector.pfVectorAdd(&g_input_vector, "down");
-            //printf("ADDED 2\n");
 
         }
         else if(JOYSTICK_LEFT)
@@ -100,8 +95,6 @@ enum JoystickState check_ADC_state()
             {
                 g_current_input = 3;
             }
-            //g_input_vector.pfVectorAdd(&g_input_vector, "left");
-            //printf("ADDED 3\n");
 
         }
         else if(JOYSTICK_RIGHT)
@@ -111,8 +104,6 @@ enum JoystickState check_ADC_state()
             {
                 g_current_input = 4;
             }
-            //g_input_vector.pfVectorAdd(&g_input_vector, "right");
-            //printf("ADDED 4\n");
 
         }
         else
