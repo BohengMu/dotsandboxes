@@ -71,15 +71,16 @@ enum JoystickState check_ADC_state()
     }
     else //otherwise, set joystick state based on ADC conversion values
     {
-        if(JOYSTICK_UP)
+        if(JOYSTICK_RIGHT)
         {
-            g_joystick_state = Up;
+            g_joystick_state = Right;
             if(g_current_input == 0)
             {
-                g_current_input = 1;
+                g_current_input = 4;
             }
-            //g_input_vector.pfVectorAdd(&g_input_vector, "up");
-            //printf("ADDED 1\n");
+            //g_input_vector.pfVectorAdd(&g_input_vector, "right");
+            //printf("ADDED 4\n");
+
 
         }
         else if(JOYSTICK_DOWN)
@@ -96,7 +97,7 @@ enum JoystickState check_ADC_state()
         else if(JOYSTICK_LEFT)
         {
             g_joystick_state = Left;
-            if(g_current_input == 0)
+            if(g_current_input == 0 || g_current_input == 4)
             {
                 g_current_input = 3;
             }
@@ -104,15 +105,15 @@ enum JoystickState check_ADC_state()
             //printf("ADDED 3\n");
 
         }
-        else if(JOYSTICK_RIGHT)
+        else if(JOYSTICK_UP)
         {
-            g_joystick_state = Right;
+            g_joystick_state = Up;
             if(g_current_input == 0)
             {
-                g_current_input = 4;
+                g_current_input = 1;
             }
-            //g_input_vector.pfVectorAdd(&g_input_vector, "right");
-            //printf("ADDED 4\n");
+            //g_input_vector.pfVectorAdd(&g_input_vector, "up");
+            //printf("ADDED 1\n");
 
         }
         else

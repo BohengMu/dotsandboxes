@@ -62,7 +62,7 @@ void main(void)
         // process the current input state
         process_move('a');
 
-        for(i= 0 ; i < 200; i++){
+        for(i= 0 ; i < 150; i++){
             refresh_led_board();
         }
     }
