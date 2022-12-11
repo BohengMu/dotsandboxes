@@ -43,6 +43,22 @@ void init_board()
           write_led_dot(i*2, j*2, 0);
       }
   }
+  uint8_t p_matrix[5][3] =
+      {
+       {1, 1, 0},
+       {1, 0, 1},
+       {1, 1, 0},
+       {1, 0, 0},
+       {1, 0, 0},
+      };
+
+      uint8_t color = 6;
+      uint16_t x, y;
+      for (x = 26; x < 32, x++){
+          for (y = 0, y < 3, y++){
+              matrixrgb_write_pixel(x, y, p_matrix[x-26][y]);
+          }
+      }
 }
 
 /*
@@ -220,28 +236,42 @@ uint8_t write_led_box(uint16_t x, uint16_t y, uint16_t status)
 
 uint8_t write_player_score(player player)
 {
+    uint8_t p_matrix[5][3] =
+    {
+     {1, 1, 0},
+     {1, 0, 1},
+     {1, 1, 0},
+     {1, 0, 0},
+     {1, 0, 0},
+    };
+
     uint8_t color = 6;
     uint16_t x, y;
-    for(x = 8; x < 15; x++)
+    for (x = 26; x < 32, x++){
+        for (y = 0, y < 3, y++){
+            matrixrgb_write_pixel(x, y, p_matrix[x-26][y]);
+        }
+    }
+    for(x = 0; x < 7; x++)
     {
         for(y = 27; y < 31; y++)
         {
-            if(player.ID == 0)
-            {
-                if(x == 8 || y == 27 || (x==10 && y<=29) || y == 29 || x == 14)
-                {
-                    matrixrgb_write_pixel(y, x, color);
-                }
-            }
-            else
-            {
-                if(x == 8 || y == 27 || (x==10 && y<=29) || y == 29 || x == 14 || (x>=12 && x<=14 && (y == 27 || y == 29 || y == 31))
+        if(x == 0 || y == 27 || (x==10 && y<=29) || y == 29)
+        {
+            matrixrgb_write_pixel(y, x, color);
+        }
+        if(x == 14)
+        {
+            matrixrgb_write_pixel(y, x, color);
+        }
+        else
+        {
+            if(x == 8 || y == 27 || (x==10 && y<=29) || y == 29 || x == 14 || (x>=12 && x<=14 && (y == 27 || y == 29 || y == 31))
                         || (x == 31 && y<=29) || (x == 12 && y<=31 && y>=29))
-                {
-                    matrixrgb_write_pixel(y, x, color);
-                }
+            {
+                matrixrgb_write_pixel(y, x, color);
             }
-
+        }
 
         }
 

@@ -26,7 +26,7 @@ uint8_t write_led_dot (uint16_t x, uint16_t y, uint16_t status );
 uint8_t write_player_score(player player);
 uint8_t write_digit(int digit);
 void write_initial_dots ();
-
+void game_end();
 
 #endif /* BOARD_H_ */
 // end of file
