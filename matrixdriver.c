@@ -14,7 +14,6 @@
 #include "board.h"
 
 volatile extern uint8_t g_led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
-
 //set all pins to output
 void init_matrix(){
     GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN2 | GPIO_PIN3);
@@ -188,7 +187,7 @@ void refresh_led_board(){
         uint8_t* second_row = g_led_matrix[j + 16];
         P4 -> OUT &= ~ GPIO_PIN5;//R1, B1
             for(i = 0; i<32; i++){
-                set_rgb_data(first_row[i], second_row[i]);
+                set_rgb_data(g_led_matrix[j][i], second_row[i]);
 
                 P5 -> OUT |= GPIO_PIN4;
                     //Clock_Delay1us(5);

@@ -14,6 +14,9 @@
 //game state board
 volatile int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
 
+int box_size;
+int inner_box_size;
+
 //led board
 volatile uint8_t g_led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
 
@@ -28,8 +31,19 @@ char boxes[3] = {' ', '1', '2'};
  */
 void init_board()
 {
+  int row_size = ((LED_MATRIX_ROWS-1)/ROWS +1);
+  int column_size = ((LED_MATRIX_COLUMNS-1)/COLUMNS +1);
+  if (row_size < column_size)
+  {
+      box_size = row_size;
+  }
+  else
+  {
+      box_size = column_size;
+  }
+  inner_box_size = box_size - 2;
   //set led to all zeros
-  memset(g_led_matrix, 0, LED_MATRIX_SIZE * LED_MATRIX_SIZE * sizeof(uint8_t));
+  memset(g_led_matrix, 0, LED_MATRIX_ROWS * LED_MATRIX_COLUMNS * sizeof(uint8_t));
 
   //set game state to zeros
   int i, j;
@@ -124,7 +138,7 @@ uint8_t matrixrgb_write_pixel(uint16_t x, uint16_t y,
                               uint8_t color)
 {
 
-  if ((x >= LED_MATRIX_SIZE) || (y >= LED_MATRIX_SIZE))
+  if ((x >= LED_MATRIX_ROWS) || (y >= LED_MATRIX_COLUMNS))
   {
     return 1;
   }
@@ -153,12 +167,12 @@ uint8_t write_led_edge(uint16_t x, uint16_t y, uint16_t status)
   if (x % 2 == 0) // horizontal edge
   {
     // projecting game coordinate to led coordinate
-    uint16_t edge_base_x = ((x / 2) * (INNER_BOX_SIZE + 1));
-    uint16_t edge_base_y = 1 + (((y - 1) / 2) * (INNER_BOX_SIZE + 1));
+    uint16_t edge_base_x = ((x / 2) * (inner_box_size + 1));
+    uint16_t edge_base_y = 1 + (((y - 1) / 2) * (inner_box_size + 1));
 
     // print the edge on the led
     uint16_t edge_offset;
-    for (edge_offset = 0; edge_offset < INNER_BOX_SIZE; edge_offset++)
+    for (edge_offset = 0; edge_offset < inner_box_size; edge_offset++)
     {
       matrixrgb_write_pixel(edge_base_x,
                                  edge_base_y + edge_offset, color);
@@ -167,12 +181,12 @@ uint8_t write_led_edge(uint16_t x, uint16_t y, uint16_t status)
   } else // horizontal edge
   {
     // projecting game coordinate to led coordinate
-    uint16_t edge_base_x = 1 + (((x - 1) / 2) * (INNER_BOX_SIZE + 1));
-    uint16_t edge_base_y = ((y / 2) * (INNER_BOX_SIZE + 1));
+    uint16_t edge_base_x = 1 + (((x - 1) / 2) * (inner_box_size + 1));
+    uint16_t edge_base_y = ((y / 2) * (inner_box_size + 1));
 
     // print the edge on the led
     uint16_t edge_offset;
-    for (edge_offset = 0; edge_offset < INNER_BOX_SIZE; edge_offset++)
+    for (edge_offset = 0; edge_offset < inner_box_size; edge_offset++)
     {
       matrixrgb_write_pixel(edge_base_x + edge_offset,
                                  edge_base_y, color);
@@ -185,13 +199,13 @@ uint8_t write_led_edge(uint16_t x, uint16_t y, uint16_t status)
 /*
  * write the box onto the led matrix
  * empty box should be off
- * inner box are of size (INNER_BOX_SIZE) x (INNER_BOX_SIZE)
+ * inner box are of size (inner_box_size) x (inner_box_size)
  */
 uint8_t write_led_box(uint16_t x, uint16_t y, uint16_t status)
 {
   // projecting game x,y into the led matrix coordinates
-  uint16_t box_base_x = 1 + (((x - 1) / 2) * (INNER_BOX_SIZE + 1));
-  uint16_t box_base_y = 1 + (((y - 1) / 2) * (INNER_BOX_SIZE + 1));
+  uint16_t box_base_x = 1 + (((x - 1) / 2) * (inner_box_size + 1));
+  uint16_t box_base_y = 1 + (((y - 1) / 2) * (inner_box_size + 1));
 
   // determining color
   uint8_t color = status + 5;
@@ -204,9 +218,9 @@ uint8_t write_led_box(uint16_t x, uint16_t y, uint16_t status)
 
   // writing the actual pixels
   uint16_t x_offset, y_offset;
-  for (x_offset = 0; x_offset < INNER_BOX_SIZE; x_offset++)
+  for (x_offset = 0; x_offset < inner_box_size; x_offset++)
   {
-    for (y_offset = 0; y_offset < INNER_BOX_SIZE; y_offset++)
+    for (y_offset = 0; y_offset < inner_box_size; y_offset++)
     {
       // calculate led coords
       uint16_t led_y = y_offset + box_base_y;
@@ -225,8 +239,8 @@ uint8_t write_led_box(uint16_t x, uint16_t y, uint16_t status)
 uint8_t write_led_dot(uint16_t x, uint16_t y, uint16_t status)
 {
   // projecting game x,y into the led matrix coordinates
-  uint16_t led_dot_x = (x * (BOX_SIZE - 1) / 2);
-  uint16_t led_dot_y = (y * (BOX_SIZE - 1) / 2);
+  uint16_t led_dot_x = (x * (box_size - 1) / 2);
+  uint16_t led_dot_y = (y * (box_size - 1) / 2);
 
   // determining color
   uint16_t color = status + 1;
@@ -249,8 +263,8 @@ void write_initial_dots()
     for (dot_y = 0; dot_y < COLUMNS + 1; dot_y++)
     {
       // projecting game x,y into the led matrix coordinates
-      uint16_t led_dot_x = (dot_x * (BOX_SIZE - 1));
-      uint16_t led_dot_y = (dot_y * (BOX_SIZE - 1));
+      uint16_t led_dot_x = (dot_x * (box_size - 1));
+      uint16_t led_dot_y = (dot_y * (box_size - 1));
 
       //color hard set to 1
       matrixrgb_write_pixel(led_dot_x, led_dot_y, 1);

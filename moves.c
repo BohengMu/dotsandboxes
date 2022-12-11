@@ -32,7 +32,7 @@ extern volatile struct Player g_players[2];
 extern volatile int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
 
 //led representation
-extern volatile int led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
+extern volatile int led_matrix[LED_MATRIX_ROWS][LED_MATRIX_COLUMNS];
 
 //x, y changes for iteration
 int y_change[4] = {0, 1, 0, -1};
