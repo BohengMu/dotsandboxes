@@ -74,7 +74,21 @@ void init_moves(){
 
     //player 1 goes first
     current_player_id = 0;
+
     select_dot(0, 0);
+
+#define  PRESET_SIZE  20
+    uint16_t preset_x[PRESET_SIZE] = {1,4,5,7,5,8,5,6,2,4,6,2, 1, 0, 1, 4, 8, 8};
+    uint16_t preset_y[PRESET_SIZE] = {2,5,3,2,10,3,2,7,5,9,1,9, 6, 3, 10, 7, 5, 9};
+    int i;
+    for (i = 0; i<PRESET_SIZE; i++)
+    {
+        g_board[preset_x[i]][preset_y[i]] = 1;
+
+              // reflect in led
+        write_led_edge(preset_x[i], preset_y[i], 1);
+    }
+
 }
 
 static void print_score(){
@@ -205,6 +219,7 @@ void reset_game(){
 //end game procedure, no more boxes left
 void end_game(){
     g_b_in_game = 0;
+    int i;
     for(i= 0 ; i < 150; i++){
           refresh_led_board();
       }

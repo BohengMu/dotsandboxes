@@ -45,10 +45,10 @@ void main(void)
     init_matrix();
     //initialize player values
     init_players();
-
+    init_board();
     init_moves();
     //set dots to selcted and everyting else to zero
-    init_board();
+
 
 
     //select top left dot as begining move

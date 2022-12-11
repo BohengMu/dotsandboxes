@@ -54,6 +54,8 @@
         g_board[i][j] = 0;
       }
     }
+
+
     for(i = 0; i < ROWS + 1; i ++){
         for(j = 0;j< COLUMNS + 1; j ++){
             write_led_dot(i*2, j*2, 0);
