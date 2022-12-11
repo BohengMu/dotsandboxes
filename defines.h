@@ -9,8 +9,8 @@
 #define DEFINES_H_
 
 
-#define ROWS 4
-#define COLUMNS 5
+#define ROWS 1
+#define COLUMNS 1
 #define LED_MATRIX_SIZE 32
 #define LED_MATRIX_ROWS 26
 #define LED_MATRIX_COLUMNS 32

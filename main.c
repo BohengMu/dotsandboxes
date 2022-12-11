@@ -46,12 +46,13 @@ void main(void)
     //initialize player values
     init_players();
 
+    init_moves();
     //set dots to selcted and everyting else to zero
     init_board();
 
 
     //select top left dot as begining move
-    select_dot(2, 2);
+
 
     //print initial game state
     int i;

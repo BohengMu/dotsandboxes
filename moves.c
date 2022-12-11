@@ -40,24 +40,43 @@ int y_change[4] = {0, 1, 0, -1};
 int x_change[4] = {-1, 0, 1, 0};
 
 //global values
-int g_b_in_game = 1;
-int g_dot_x = 2, g_dot_y = 2;
-int g_line_x = 0, g_line_y = 0;
+int g_b_in_game;
+int g_dot_x, g_dot_y;
+int g_line_x, g_line_y;
 
 // who is currently moving
-volatile int current_player_id = 0;
+volatile int current_player_id;
 
 //wheter a line is hovered
-bool hover_line = 0;
+bool hover_line;
 
 //which direction is the line pointing
-int line_direction = -1;
+int line_direction;
 
 /*
  * prints player score and the
  * this is needed in the earlier stages of the game
  * to simulate seven segment output
  */
+
+void init_moves(){
+    g_b_in_game = 1;
+
+    //set initial dots
+    g_dot_x = 0;
+    g_dot_y = 0;
+    g_line_x = 0;
+    g_line_y = 0;
+
+    //set no line selection
+    hover_line = 0;
+    line_direction = -1;
+
+    //player 1 goes first
+    current_player_id = 0;
+    select_dot(0, 0);
+}
+
 static void print_score(){
     printf("Player 1 score: %i, Player 2 Score: %i \n", g_players[0].score, g_players[1].score);
     printf("Player %i turn \n", current_player_id + 1);
@@ -101,10 +120,18 @@ void process_move(char move)
 
   //reset input state
   g_joystick_state = Zero;
-  //g_button_state = NotPressed;
+  g_button_state = NotPressed;
   g_encoder_state = Neutral;
 
   //process joystic input
+
+  if(!g_b_in_game){
+      if(g_current_input == 7){
+          reset_game();
+      }
+      g_current_input = 0;
+      return;
+  }
 
   if(g_current_input == 1)
   {
@@ -154,157 +181,33 @@ void process_move(char move)
           current_player_id += 1;
           current_player_id %= 2;
       }
+
+      //check if there is any more box left
+      if(g_players[0].score + g_players[1].score >= ROWS * COLUMNS){
+          g_b_in_game = 0;
+
+      }
       //g_button_pressed = 0;
       write_player_score(g_players[current_player_id]);
   }
   g_current_input = 0;
   return;
-//  printf("VECTOR CONTENTS:\n ");
-//  int i =0;
-//  for (i = 0; i < g_input_vector.pfVectorTotal(&g_input_vector); i++)
-//  {
-//      printf("%s", (char*)g_input_vector.pfVectorGet(&g_input_vector, i));
-//  }
-//  if(strcmp(g_input_vector.pfVectorGet(&g_input_vector, 0), "up") == 0)
-//  {
-//      printf("JOYSTICK UP");
-//      move_dot_selection(g_dot_x - 2, g_dot_y);
-//      print_score();
-//      print_board();
-//      return;
-//  }
-//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)2)
-//  {
-//      printf("JOYSTICK DOWN");
-//      move_dot_selection(g_dot_x + 2, g_dot_y);
-//      print_score();
-//      print_board();
-//      return;
-//  }
-//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)3)
-//  {
-//      printf("JOYSTICK LEFT");
-//      move_dot_selection(g_dot_x, g_dot_y - 2);
-//      print_score();
-//      print_board();
-//      return;
-//  }
-//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)4)
-//  {
-//      printf("JOYSTICK RIGHT");
-//      move_dot_selection(g_dot_x, g_dot_y + 2);
-//      print_score();
-//      print_board();
-//      return;
-//  }
-//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)5)
-//  {
-//      printf("ENCODER CLOCKWISE");
-//      move_line_selection(true);
-//      print_score();
-//      print_board();
-//      g_encoder_state = Neutral;
-//      return;
-//  }
-//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)6)
-//  {
-//      printf("ENCODER COUNTERCLOCKWISE");
-//      move_line_selection(false);
-//      print_score();
-//      print_board();
-//      g_encoder_state = Neutral;
-//      return;
-//  }
-//  else if(g_input_vector.pfVectorGet(&g_input_vector, 0) == (int*)7)
-//  {
-//      printf("BUTTON PRESSED");
-//      b_can_move_again = submit_selected_line();
-//      print_score();
-//      print_board();
-//      // change players of no boxes are formed
-//      if (!b_can_move_again) {
-//          current_player_id += 1;
-//          current_player_id %= 2;
-//      }
-//      //g_button_pressed = 0;
-//      return;
-//  }
-//  int j = 0;
-//  for (j = 0; j < g_input_vector.pfVectorTotal(&g_input_vector); j++)
-//  {
-//      g_input_vector.pfVectorDelete(&g_input_vector, 0);
-//  }
+}
 
+//end game procedure, no more boxes left
+void reset_game(){
 
-//  switch(joystick_state_copy)
-//  {
-//      case Up://up case
-//          move_dot_selection(g_dot_x - 2, g_dot_y);
-//          print_score();
-//          print_board();
-//
-//          return;
-//
-//      case Down://down case
-//          move_dot_selection(g_dot_x + 2, g_dot_y);
-//          print_score();
-//          print_board();
-//          return;
-//
-//      case Left://left case
-//          move_dot_selection(g_dot_x, g_dot_y - 2);
-//          print_score();
-//          print_board();
-//          return;
-//
-//      case Right://right case
-//          move_dot_selection(g_dot_x, g_dot_y + 2);
-//          print_score();
-//          print_board();
-//          return;
-//
-//      case Zero://neutral case
-//          break;
-//  }
-//
-//  //process encoder state
-//  switch(encoder_state_copy)
-//  {
-//  // rotate counter clock wise
-//    case CounterClockwise:
-//      move_line_selection(false);
-//      print_score();
-//      print_board();
-//      g_encoder_state = Neutral;
-//      return;
-//
-//    // rotate clock wise
-//    case Clockwise:
-//      move_line_selection(true);
-//      print_score();
-//      print_board();
-//      g_encoder_state = Neutral;
-//      return;
-//
-//    //no inputs detected
-//    case Neutral:
-//        break;
-//  }
-//
-//  //process button input
-//  if (button_pressed_copy != NotPressed)
-//  {
-//      b_can_move_again = submit_selected_line();
-//      print_score();
-//      print_board();
-//      // change players of no boxes are formed
-//      if (!b_can_move_again) {
-//          current_player_id += 1;
-//          current_player_id %= 2;
-//      }
-//      //g_button_pressed = 0;
-//      return;
-//  }
+    init_players();
+    init_board();
+    init_moves();
+}
+
+//end game procedure, no more boxes left
+void end_game(){
+    g_b_in_game = 0;
+    for(i= 0 ; i < 150; i++){
+          refresh_led_board();
+      }
 }
 
 /*

@@ -10,6 +10,7 @@
 #include<stdbool.h>
 
 char get_console_input();
+void init_moves();
 
 void process_move(char move);
 bool submit_selected_line();
@@ -24,6 +25,8 @@ void select_dot(int dot_x, int dot_y);
 void unselect_dot();
 void select_line(int line_x, int line_y);
 void unselect_line();
+void end_game();
+void reset_game();
 
 #endif /* MOVES_H_ */
 // end of file
