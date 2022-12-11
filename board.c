@@ -79,6 +79,8 @@
           }
           matrixrgb_write_pixel(28, 8, 1);
           matrixrgb_write_pixel(30, 8, 1);
+          write_digit(10, 0);
+          write_digit(14, 0);
 
        }
 
