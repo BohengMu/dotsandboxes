@@ -13,6 +13,7 @@
 #include "RotaryEncoder.h"
 #include "matrixdriver.h"
 #include "PushButton.h"
+#include "matrixdriver.h"
 #include "Joystick.h"
 #include "Clock.h"
 #include "spi.h"
@@ -20,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "InputInterrupt.h"
-#include "Scoreboard.h"
+
 
 /**
  * main.c runs all the initialization code for user inputs and game simulation.
@@ -30,11 +31,15 @@
 
 void main(void)
 {
-    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
+    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
+
     //initializing taken out for now to test Boheng's code
     configure_systick();
     configure_push_button();
     Clock_Init48MHz();
+    //initializing game simulation and user inputs
+
+
     //configure encoder input, see RotaryEncoder.c
     configure_encoder();
     init_matrix();
@@ -42,28 +47,25 @@ void main(void)
     init_players();
 
     //set dots to selcted and everyting else to zero
-    clear_board();
-    configure_scoreboard();
-    initMAX6955(EUSCI_B0_BASE);
+    init_board();
 
+
+    //select top left dot as begining move
+    select_dot(2, 2);
+
+    //print initial game state
+    int i;
     while (true) {
         //get input as from keyboard as a simulation
         // will be done automatically in the back ground
         //char move = get_console_input();
 
         // process the current input state
+        process_move('a');
 
-        // 'a' is a place holder for player i nput
-//        process_move('a');
-//        int i = 70000;
-//        while(i){
-//            process_move('a');
-//            Clock_Delay1us(480000);
-//            i--;
-        //}
-        writeP1(EUSCI_B0_BASE);
-        Clock_Delay1ms(5);
+        for(i= 0 ; i < 150; i++){
+            refresh_led_board();
+        }
     }
+    return;
 }
-
-//end of file

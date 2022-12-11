@@ -26,7 +26,7 @@ char boxes[3] = {' ', '1', '2'};
 /*
  * Reconfigure the board to all zeros
  */
-void clear_board()
+void init_board()
 {
   //set led to all zeros
   memset(g_led_matrix, 0, LED_MATRIX_SIZE * LED_MATRIX_SIZE * sizeof(uint8_t));
@@ -37,6 +37,11 @@ void clear_board()
     for (j = 0; j < 2 * COLUMNS + 1; j++) {
       g_board[i][j] = 0;
     }
+  }
+  for(i = 0; i < ROWS + 1; i ++){
+      for(j = 0;j< COLUMNS + 1; j ++){
+          write_led_dot(i*2, j*2, 0);
+      }
   }
 }
 
@@ -206,13 +211,55 @@ uint8_t write_led_box(uint16_t x, uint16_t y, uint16_t status)
       // calculate led coords
       uint16_t led_y = y_offset + box_base_y;
       uint16_t led_x = x_offset + box_base_x;
-      matrixrgb_write_pixel(x_offset + led_x, led_y,
+      matrixrgb_write_pixel(led_x, led_y,
                                  color);
     }
   }
   return 0;
 }
 
+uint8_t write_player_score(player player)
+{
+    uint8_t color = 6;
+    uint16_t x, y;
+    for(x = 8; x < 15; x++)
+    {
+        for(y = 27; y < 31; y++)
+        {
+            if(player.ID == 0)
+            {
+                if(x == 8 || y == 27 || (x==10 && y<=29) || y == 29 || x == 14)
+                {
+                    matrixrgb_write_pixel(y, x, color);
+                }
+            }
+            else
+            {
+                if(x == 8 || y == 27 || (x==10 && y<=29) || y == 29 || x == 14 || (x>=12 && x<=14 && (y == 27 || y == 29 || y == 31))
+                        || (x == 31 && y<=29) || (x == 12 && y<=31 && y>=29))
+                {
+                    matrixrgb_write_pixel(y, x, color);
+                }
+            }
+
+
+        }
+
+    }
+    return 0;
+}
+uint8_t write_digit(int digit)
+{
+
+}
+
+//for(y = 21; y<28; y++)
+//{
+//    if(x == 8 || y == 21 || (x==12 && y<=24) || y == 24 || (x>=14 && x<=18 && (y == 21 || y == 24 || y == 27)) || (x == 27 && y<=24) || (x == 14 && y<=28 && y>21))
+//    {
+//        matrixrgb_write_pixel(y, x, color);
+//    }
+//}
 /*
  * write the dot onto the led matrix
  * this is quite simple as dot is just one led

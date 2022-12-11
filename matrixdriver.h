@@ -23,7 +23,7 @@ void latch_on();
 void latch_off();
 void toggle_clock();
 void refresh_led_board();
-void board_led_off();
+void led_board_off();
 
 
 #endif /* MATRIXDRIVER_H_ */

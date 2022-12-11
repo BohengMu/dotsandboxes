@@ -7,6 +7,7 @@
 
 #include "moves.h"
 #include "board.h"
+#include "Clock.h"
 #include "defines.h"
 #include "players.h"
 #include <stdbool.h>
@@ -17,6 +18,7 @@
 #include "RotaryEncoder.h"
 #include "PushButton.h"
 #include "Joystick.h"
+#include "matrixdriver.h"
 
 //input states
 extern volatile enum EncoderState g_encoder_state;
@@ -99,67 +101,61 @@ void process_move(char move)
 
   //reset input state
   g_joystick_state = Zero;
-  g_button_state = NotPressed;
+  //g_button_state = NotPressed;
   g_encoder_state = Neutral;
 
   //process joystic input
 
   if(g_current_input == 1)
   {
-      printf("JOYSTICK UP");
+      //printf("JOYSTICK UP");
       move_dot_selection(g_dot_x - 2, g_dot_y);
-      print_score();
-      print_board();
+
   }
   else if(g_current_input == 2)
   {
-      printf("JOYSTICK DOWN");
+      //printf("JOYSTICK DOWN");
       move_dot_selection(g_dot_x + 2, g_dot_y);
-      print_score();
-      print_board();
+
   }
   else if(g_current_input == 3)
   {
-      printf("JOYSTICK LEFT");
+      //printf("JOYSTICK LEFT");
       move_dot_selection(g_dot_x, g_dot_y - 2);
-      print_score();
-      print_board();
+
   }
   else if(g_current_input == 4)
   {
-      printf("JOYSTICK RIGHT");
+      //printf("JOYSTICK RIGHT");
       move_dot_selection(g_dot_x, g_dot_y + 2);
-      print_score();
-      print_board();
+
   }
   else if(g_current_input == 5)
   {
-      printf("ENCODER CLOCKWISE");
+      //printf("ENCODER CLOCKWISE");
       move_line_selection(true);
-      print_score();
-      print_board();
+
       g_encoder_state = Neutral;
   }
   else if(g_current_input == 6)
   {
-      printf("ENCODER COUNTERCLOCKWISE");
+      //printf("ENCODER COUNTERCLOCKWISE");
       move_line_selection(false);
-      print_score();
-      print_board();
+
       g_encoder_state = Neutral;
   }
   else if(g_current_input == 7)
   {
-      printf("BUTTON PRESSED");
+      //printf("BUTTON PRESSED");
       b_can_move_again = submit_selected_line();
-      print_score();
-      print_board();
+
       // change players of no boxes are formed
       if (!b_can_move_again) {
           current_player_id += 1;
           current_player_id %= 2;
       }
       //g_button_pressed = 0;
+      write_player_score(g_players[current_player_id]);
   }
   g_current_input = 0;
   return;

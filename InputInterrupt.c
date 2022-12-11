@@ -48,11 +48,12 @@ void SysTick_Handler(void)
     check_ADC_state(); //check joystick values, see Joystick.c
     if(InterruptCounter % 5 == 0){ //on every 5th interrupt (5 ms)
         check_button_state(); //check if button is pressed
-    }
-
-    if(InterruptCounter % 10 == 0){ //on every 5th interrupt (5 ms)
-        refresh_led_board(); //check if button is pressed
         InterruptCounter = 0; //reset InterruptCounter
+
     }
+    check_button_state(); //check if button is pressed
+         //check if button is pressed
+
+
     InterruptCounter++;
 }

@@ -8,6 +8,7 @@
 #include "defines.h"
 #include "msp.h"
 #include "driverlib.h"
+
 volatile enum JoystickState g_joystick_state;
 //extern vector g_input_vector;
 extern volatile int g_current_input;
@@ -71,12 +72,12 @@ enum JoystickState check_ADC_state()
     }
     else //otherwise, set joystick state based on ADC conversion values
     {
-        if(JOYSTICK_UP)
+        if(JOYSTICK_RIGHT)
         {
-            g_joystick_state = Up;
+            g_joystick_state = Right;
             if(g_current_input == 0)
             {
-                g_current_input = 1;
+                g_current_input = 4;
             }
         }
         else if(JOYSTICK_DOWN)
@@ -91,19 +92,20 @@ enum JoystickState check_ADC_state()
         else if(JOYSTICK_LEFT)
         {
             g_joystick_state = Left;
-            if(g_current_input == 0)
+            if(g_current_input == 0 || g_current_input == 4)
             {
                 g_current_input = 3;
             }
 
         }
-        else if(JOYSTICK_RIGHT)
+        else if(JOYSTICK_UP)
         {
-            g_joystick_state = Right;
+            g_joystick_state = Up;
             if(g_current_input == 0)
             {
-                g_current_input = 4;
+                g_current_input = 1;
             }
+
 
         }
         else
