@@ -147,6 +147,7 @@ void process_move(char move)
   else if(g_current_input == 7)
   {
       //printf("BUTTON PRESSED");
+      clear_message();
       b_can_move_again = submit_selected_line();
 
       // change players of no boxes are formed
@@ -318,6 +319,7 @@ bool submit_selected_line()
   // chech if the line can be selected
   if (line_direction == -1)
   {
+      write_error(2);
     //printf("Cannot select move, no line is selected\n");
     return true;
   }
@@ -325,6 +327,7 @@ bool submit_selected_line()
   // check if the move have been selected
   if (g_board[g_line_x][g_line_y] == 3)
   {
+      write_error(1);
     //printf("Cannot select a selected move!\n");
     return true;
   }
@@ -414,6 +417,7 @@ void move_dot_selection(int dot_x, int dot_y)
 {
   // check if dot is within bounds
   if (!valid_move(dot_x, dot_y)) {
+      write_error(3);
     //printf("Cannot select move, out of bounds \n");
     return;
   } else {

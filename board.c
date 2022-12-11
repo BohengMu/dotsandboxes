@@ -457,13 +457,35 @@ void write_single_digit(uint16_t start_y, uint8_t score_matrix[5][3]){
         }
     }
 }
-//void write_error(uint16_t start_y, int error)
-//{
-//    switch(error){
-//    case 1:
-//
-//    }
-//}
+void write_error(int error)
+{
+    uint8_t error_matrix[5][7] =
+          {
+           {1, 1, 1, 0, 1, 1, 1},
+           {1, 0, 0, 0, 1, 0, 1},
+           {1, 1, 1, 0, 1, 1, 1},
+           {1, 0, 0, 0, 1, 1, 0},
+           {1, 1, 1, 0, 1, 0, 1},
+          };
+    int row, col;
+    for (col = 27; col < 32; col++){
+        for (row = 21; row < 28; row++){
+            matrixrgb_write_pixel(col, row, (error_matrix[col-27][row-21])*4);
+        }
+    }
+
+    write_digit(29, error);
+
+}
+void clear_message()
+{
+    int row, col;
+    for (col = 27; col < 32; col++){
+        for (row = 21; row < 32; row++){
+            matrixrgb_write_pixel(col, row, 0);
+        }
+    }
+}
 
 
   /*

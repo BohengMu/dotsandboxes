@@ -26,6 +26,10 @@ uint8_t write_led_dot (uint16_t x, uint16_t y, uint16_t status );
 uint8_t write_player_score(struct Player player);
 uint8_t write_digit(uint16_t start_y, int digit);
 void write_single_digit(uint16_t start_y, uint8_t score_matrix[5][3]);
+void write_error(int error);
+void clear_message();
+
+
 
 void write_initial_dots ();
 void game_end();
