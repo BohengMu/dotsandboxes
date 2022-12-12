@@ -138,7 +138,6 @@ void process_move(char move)
   g_encoder_state = Neutral;
 
   //process joystic input
-
   if(!g_b_in_game){
       if(g_current_input == 7){
           reset_game();
@@ -149,30 +148,35 @@ void process_move(char move)
 
   if(g_current_input == 1)
   {
+      clear_message();
       //printf("JOYSTICK UP");
       move_dot_selection(g_dot_x - 2, g_dot_y);
 
   }
   else if(g_current_input == 2)
   {
+      clear_message();
       //printf("JOYSTICK DOWN");
       move_dot_selection(g_dot_x + 2, g_dot_y);
 
   }
   else if(g_current_input == 3)
   {
+      clear_message();
       //printf("JOYSTICK LEFT");
       move_dot_selection(g_dot_x, g_dot_y - 2);
 
   }
   else if(g_current_input == 4)
   {
+      clear_message();
       //printf("JOYSTICK RIGHT");
       move_dot_selection(g_dot_x, g_dot_y + 2);
 
   }
   else if(g_current_input == 5)
   {
+      clear_message();
       //printf("ENCODER CLOCKWISE");
       move_line_selection(true);
 
@@ -180,15 +184,15 @@ void process_move(char move)
   }
   else if(g_current_input == 6)
   {
+      clear_message();
       //printf("ENCODER COUNTERCLOCKWISE");
       move_line_selection(false);
-
       g_encoder_state = Neutral;
   }
   else if(g_current_input == 7)
   {
-      //printf("BUTTON PRESSED");
       clear_message();
+      //printf("BUTTON PRESSED");
       b_can_move_again = submit_selected_line();
 
       // change players of no boxes are formed
@@ -199,11 +203,25 @@ void process_move(char move)
 
       //check if there is any more box left
       if(g_players[0].score + g_players[1].score >= ROWS * COLUMNS){
+          clear_bottom();
+          if(g_players[0].score > g_players[1].score)
+          {
+              write_winner(0);
+          }
+          else if(g_players[1].score > g_players[0].score)
+          {
+              write_winner(1);
+          }
+          else
+          {
+              write_winner(2);
+          }
           g_b_in_game = 0;
 
       }
-      //g_button_pressed = 0;
-      write_player_score(g_players[current_player_id]);
+      else{
+          write_player_score(g_players[current_player_id]);
+      }
   }
   g_current_input = 0;
   return;
@@ -211,7 +229,8 @@ void process_move(char move)
 
 //end game procedure, no more boxes left
 void reset_game(){
-
+    clear_bottom();
+    refresh_led_board();
     init_players();
     init_board();
     init_moves();
@@ -221,6 +240,7 @@ void reset_game(){
 void end_game(){
     g_b_in_game = 0;
     int i;
+    clear_bottom();
     for(i= 0 ; i < 150; i++){
           refresh_led_board();
       }

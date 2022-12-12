@@ -79,8 +79,8 @@
           }
           matrixrgb_write_pixel(28, 8, 1);
           matrixrgb_write_pixel(30, 8, 1);
-          write_digit(10, 0);
-          write_digit(14, 0);
+          write_digit(10, 0, 1);
+          write_digit(14, 0, 1);
 
        }
 
@@ -278,29 +278,28 @@
 
   uint8_t write_player_score(struct Player player)
   {
+
       if(player.ID == 1){
-          write_digit(4,1);
+          write_digit(4,1,1);
       }
       else{
-          write_digit(4,2);
+          write_digit(4,2,1);
       }
 
       if(player.score < 10){
-          write_digit(10, 0);
+          write_digit(10, 0,1);
       }else
       {
-          write_digit(10, player.score /10);
+          write_digit(10, player.score /10,1);
 
       }
 
-      write_digit(14, player.score %10);
-//      if(player.ID == 0){
-//          write_digit(0,4,0);
-//      }
+      write_digit(14, player.score %10,1);
+
       return 0;
   }
 
-  uint8_t write_digit(uint16_t start_y, int digit)
+  uint8_t write_digit(uint16_t start_y, int digit, int color)
   {
       uint8_t zero_matrix[5][3] =
       {
@@ -323,12 +322,12 @@
       case 0:
       {
 
-          write_single_digit(start_y ,zero_matrix);
+          write_single_digit(start_y ,zero_matrix, color);
           break;
       }
       case 1:
       {
-          write_single_digit(start_y, one_matrix);
+          write_single_digit(start_y, one_matrix, color);
           break;
       }
       case 2:
@@ -341,7 +340,7 @@
              {1, 0, 0},
              {1, 1, 1},
             };
-          write_single_digit(start_y, two_matrix);
+          write_single_digit(start_y, two_matrix, color);
 
           break;
       }
@@ -355,7 +354,7 @@
              {0, 0, 1},
              {1, 1, 1},
             };
-          write_single_digit(start_y, three_matrix);
+          write_single_digit(start_y, three_matrix, color);
           break;
       }
       case 4:
@@ -368,7 +367,7 @@
              {0, 0, 1},
              {0, 0, 1},
             };
-          write_single_digit(start_y, four_matrix);
+          write_single_digit(start_y, four_matrix, 1);
           break;
       }
       case 5:
@@ -381,7 +380,7 @@
              {0, 0, 1},
              {1, 1, 1},
             };
-          write_single_digit(start_y, five_matrix);
+          write_single_digit(start_y, five_matrix, 1);
           break;
       }
       case 6:
@@ -394,7 +393,7 @@
              {1, 0, 1},
              {1, 1, 1},
             };
-          write_single_digit(start_y, six_matrix);
+          write_single_digit(start_y, six_matrix, 1);
           break;
       }
       case 7:
@@ -407,7 +406,7 @@
              {0, 0, 1},
              {0, 0, 1},
             };
-          write_single_digit(start_y, seven_matrix);
+          write_single_digit(start_y, seven_matrix, 1);
           break;
       }
       case 8:
@@ -420,7 +419,7 @@
              {1, 0, 1},
              {1, 1, 1},
             };
-          write_single_digit(start_y, eight_matrix);
+          write_single_digit(start_y, eight_matrix, 1);
           break;
       }
       case 9:
@@ -433,7 +432,7 @@
              {0, 0, 1},
              {0, 0, 1},
             };
-          write_single_digit(start_y, nine_matrix);
+          write_single_digit(start_y, nine_matrix, 1);
           break;
       }
       default:
@@ -446,18 +445,18 @@
                  {0, 0, 0},
                  {0, 0, 0},
                 };
-          write_single_digit(start_y, blank_matrix);
+          write_single_digit(start_y, blank_matrix, 1);
 
       }
 
       }
       return 0;
   }
-void write_single_digit(uint16_t start_y, uint8_t score_matrix[5][3]){
+void write_single_digit(uint16_t start_y, uint8_t score_matrix[5][3], int color){
     int x, y;
     for (x = 27; x < 32; x++){
         for (y = start_y; y < start_y+3; y++){
-            matrixrgb_write_pixel(x, y, score_matrix[x-27][y-start_y]);
+            matrixrgb_write_pixel(x, y, score_matrix[x-27][y-start_y]*color);
         }
     }
 }
@@ -478,8 +477,72 @@ void write_error(int error)
         }
     }
 
-    write_digit(29, error);
+    write_digit(29, error, 4);
 
+}
+void write_winner(int state)
+{
+    switch(state)
+    {
+        case 0:
+        {
+            uint8_t winner_matrix[5][26] =
+                  {
+                   {1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1},
+                   {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0},
+                   {1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1},
+                   {1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1},
+                   {1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1},
+                  };
+            int col, row;
+            for (col = 27; col < 32; col++){
+                for (row = 3; row < 29; row++){
+                    matrixrgb_write_pixel(col, row, (winner_matrix[col-27][row-3])*6);
+                }
+            }
+            break;
+        }
+        case 1:
+        {
+            uint8_t winner_matrix[5][26] =
+                  {
+                   {1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1},
+                   {1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0},
+                   {1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1},
+                   {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1},
+                   {1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1},
+                  };
+            int col, row;
+            for (col = 27; col < 32; col++){
+                for (row = 3; row < 29; row++){
+                    matrixrgb_write_pixel(col, row, (winner_matrix[col-27][row-3])*7);
+                }
+            }
+            break;
+        }
+        case 2:
+        {
+            uint8_t tie_matrix[5][17] =
+                  {
+                   {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1},
+                   {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+                   {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1},
+                   {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+                   {0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1},
+                  };
+            int col, row;
+            for (col = 27; col < 32; col++){
+                for (row = 1; row < 18; row++){
+                    matrixrgb_write_pixel(col, row, (tie_matrix[col-27][row-1]));
+                }
+            }
+            break;
+        }
+        default:
+        {
+            clear_bottom();
+        }
+    }
 }
 void clear_message()
 {
@@ -490,7 +553,15 @@ void clear_message()
         }
     }
 }
-
+void clear_bottom()
+{
+    int row, col;
+    for (col = 27; col < 32; col++){
+        for (row = 0; row < 32; row++){
+            matrixrgb_write_pixel(col, row, 0);
+        }
+    }
+}
 
   /*
    * all the dots should be lighted to the dot color 1
