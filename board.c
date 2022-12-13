@@ -192,7 +192,7 @@
                                    color);
       }
     }
-    return 0;s
+    return 0;
  }
 
 /*

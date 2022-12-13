@@ -37,8 +37,6 @@
 #define ENCODER1_B_HIGH P3->IN & BIT6
 #define ENCODER1_B_LOW !(P3->IN & BIT5)
 
-<<<<<<< HEAD
-=======
 //game state defines
 #define MOVE_SELECTED 3
 #define LINE_NOT_SELECTED -1
@@ -49,7 +47,7 @@
 #define BLACK 0
 #define BLUE 1
 #define GREEN 2
-#define RED 3
+#define RED 4
 
 
 //joystick state defines
