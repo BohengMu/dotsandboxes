@@ -12,9 +12,22 @@
 #include "msp.h"
 #include "gpio.h"
 #include "board.h"
+#include "defines.h"
 
 volatile extern uint8_t g_led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
-//set all pins to output
+//set all pins to output and low on 5.5 and 6.5
+/*
+ *      6.0 pin 3 driver left addr 0
+        R1 3.2                  G1 6.1
+        B1 3.3                  G2 4.0
+        R2 4.1                  B 4.2
+        B2 4.3                  D 4.4
+        A 1.5                   LAT 4.5
+        4.6 pin 6 driver left addr 2        C 4.7
+        6.5 pin 5 driver left clk    *      ClK 4.4
+        6.4 pin 4 driver left data      OE 5.5
+ *
+ */
 void init_matrix(){
     GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN2 | GPIO_PIN3);
     GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN2  | GPIO_PIN3 | GPIO_PIN4 | GPIO_PIN5 | GPIO_PIN7);
@@ -22,14 +35,10 @@ void init_matrix(){
     GPIO_setAsOutputPin(GPIO_PORT_P6, GPIO_PIN1);
     GPIO_setAsOutputPin(GPIO_PORT_P5, GPIO_PIN4 | GPIO_PIN5);
     GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN5);
-    P6 -> OUT &= ~ GPIO_PIN5;//R1, B1
+    GPIO_setOutputLowOnPin(GPIO_PORT_P6, GPIO_PIN5);
 }
 
-
-
-
 //select one out of 16 rows
-//
 void select_row(uint16_t select){
     //clear all bits
     P1 -> OUT &= ~GPIO_PIN5;//a
@@ -42,7 +51,7 @@ void select_row(uint16_t select){
 
     // select is ODD: set A pin (GPIO 1.5) high
     if (select & 0x01) {
-        P1 -> OUT |= GPIO_PIN5;
+        SELECT_A;
     }
 
     // sets DCB of select bits based on select
@@ -52,36 +61,36 @@ void select_row(uint16_t select){
         break;
     case 2:
     case 3:
-        P4 -> OUT |= GPIO_PIN2;
+        SELECT_B
         break;
     case 4:
     case 5:
-        P4 -> OUT |= GPIO_PIN7;
+        SELECT_C;
         break;
     case 6:
     case 7:
-        P4 -> OUT |= GPIO_PIN7;
-        P4 -> OUT |= GPIO_PIN2;
+        SELECT_C;
+        SELECT_B;
         break;
     case 8:
     case 9:
-        P4 -> OUT |= GPIO_PIN4;
+        SELECT_D;
         break;
     case 10:
     case 11:
-        P4 -> OUT |= GPIO_PIN4;
-        P4 -> OUT |= GPIO_PIN2;
+        SELECT_D;
+        SELECT_B;
         break;
     case 12:
     case 13:
-        P4 -> OUT |= GPIO_PIN4;
-        P4 -> OUT |= GPIO_PIN7;
+        SELECT_D;
+        SELECT_C;
         break;
     case 14:
     case 15:
-        P4 -> OUT |= GPIO_PIN4;
-        P4 -> OUT |= GPIO_PIN7;
-        P4 -> OUT |= GPIO_PIN2;
+        SELECT_D;
+        SELECT_C;
+        SELECT_B;
         break;
 
     }
@@ -154,80 +163,37 @@ void set_rgb_data(uint8_t rgb1, uint8_t rgb2){
 
 }
 
-//latch on to signify end of a row
-void latch_on()
-{
-    P4 -> OUT |= GPIO_PIN5;
-}
-
-//latch off to start a new data row
-void latch_off()
-{
-    P4 -> OUT &= ~ GPIO_PIN5;//R1, B1
-}
-
-//toggle the clock
-void toggle_clock()
-{
-    P5 -> OUT |= GPIO_PIN4;
-    //Clock_Delay1us(5);
-    P5 -> OUT &= ~ GPIO_PIN4;//R1, B1
-
-}
-
-//refreshboard sequence
-
+/* Refresh board sequence
+ * LED Matrix runs off 16 bit multiplexing, so it writes two 16x32 pixel boards
+ * at a time, which is defined by first_row and second_row.
+ * g_led_matrix stores all the pixel data to write to the board
+ */
 void refresh_led_board(){
-    int i, j, k;
+    int i, j;
     for(j = 0; j < 16; j++){
-        //GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN5);
-        //select_row(j);
+        //define first and second rows to write to
         select_row(j);
         uint8_t* first_row = g_led_matrix[j];
         uint8_t* second_row = g_led_matrix[j + 16];
-        P4 -> OUT &= ~ GPIO_PIN5;//R1, B1
+        P4 -> OUT &= ~ GPIO_PIN5;//latch off to start new data row
             for(i = 0; i<32; i++){
                 set_rgb_data(g_led_matrix[j][i], second_row[i]);
-
+                //toggle clock
                 P5 -> OUT |= GPIO_PIN4;
-                    //Clock_Delay1us(5);
                 P5 -> OUT &= ~ GPIO_PIN4;//R1, B1
-                //Clock_Delay1us(1);
             }
         P4 -> OUT |= GPIO_PIN5;//latch off
             P4 -> OUT &= ~ GPIO_PIN5;//R1, B1
+            //turn off the board by setting all pixels to black to prevent aliasing
             for(i = 0; i<32; i++){
                 set_rgb_data(0, 0);
-
+                //toggle clock
                 P5 -> OUT |= GPIO_PIN4;
-                    //Clock_Delay1us(5);
                 P5 -> OUT &= ~ GPIO_PIN4;//R1, B1
-                //Clock_Delay1us(1);
             }
-        P4 -> OUT |= GPIO_PIN5;//latch on
-
-
-    }
-
-    //Clock_Delay1us(10);
-
-}
-
-void led_board_off(){
-    int i, j;
-    for(j = 0; j < 16; j++){
-        latch_off();
-        //GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN5);
-        //select_row(j);
-        for(i = 0; i<32; i++){
-            set_rgb_data(0, 0);
-            select_row(j);
-            toggle_clock();
-            //Clock_Delay1us(1);
-        }
-        latch_on();
+        P4 -> OUT |= GPIO_PIN5;//latch on to signify end of row
 
     }
 
-    //Clock_Delay1us(10);
 }
+//end of file

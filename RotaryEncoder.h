@@ -18,3 +18,4 @@ enum EncoderState{Neutral, Clockwise, CounterClockwise};
 
 enum EncoderState check_encoder_state(void);
 #endif /* ROTARYENCODER_H_ */
+//end of file

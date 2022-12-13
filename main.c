@@ -2,7 +2,6 @@
  * main.c
  *
  *  Created on: Oct 25, 2022
-<<<<<<< HEAD
  *      Author: mub91
  */
 

@@ -9,8 +9,8 @@
 #include "msp.h"
 #include "driverlib.h"
 
+//global variables that indicate current state of joystick and input queue to process game logic
 volatile enum JoystickState g_joystick_state;
-//extern vector g_input_vector;
 extern volatile int g_current_input;
 /*
  * ADC configuration sets the ADC to take input from the analog joystick, which is currently
@@ -61,18 +61,19 @@ void configure_ADC()
  * Interrupt routine in InputInterrupt.c calls this function
  * If ADC conversion is done, determines what position Joystick is in
  * Return value is current state of Joystick
- *
+ * Input queue only adds move if this is the first move to be processed
  * Input Queue: g_current_input: Up is 1, Down is 2, Left is 3, Right is 4
  */
 enum JoystickState check_ADC_state()
 {
     if(!ADC14_CONVERSION_FINISHED) //if conversion is not done, stay in current state
     {
-        return;
+        g_joystick_state = Zero;
+        return g_joystick_state;
     }
     else //otherwise, set joystick state based on ADC conversion values
     {
-        if(JOYSTICK_RIGHT)
+        if(JOYSTICK_RIGHT) //right is input queue value 4
         {
             g_joystick_state = Right;
             if(g_current_input == 0)
@@ -80,7 +81,7 @@ enum JoystickState check_ADC_state()
                 g_current_input = 4;
             }
         }
-        else if(JOYSTICK_DOWN)
+        else if(JOYSTICK_DOWN) //down is input queue value 2
         {
             g_joystick_state = Down;
             if(g_current_input == 0)
@@ -89,26 +90,26 @@ enum JoystickState check_ADC_state()
             }
 
         }
-        else if(JOYSTICK_LEFT)
+        else if(JOYSTICK_LEFT) //left is input queue value 3
         {
             g_joystick_state = Left;
+            //since max ref voltage is 3.3 and we run on 5 V, there is issue of moving left registering a move right initially
+            //so override the move right with move left
             if(g_current_input == 0 || g_current_input == 4)
             {
                 g_current_input = 3;
             }
 
         }
-        else if(JOYSTICK_UP)
+        else if(JOYSTICK_UP) //up is input queue value 1
         {
             g_joystick_state = Up;
             if(g_current_input == 0)
             {
                 g_current_input = 1;
             }
-
-
         }
-        else
+        else //otherwise, the joystick is neutral
         {
             g_joystick_state = Zero;
         }

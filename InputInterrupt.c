@@ -18,7 +18,7 @@
 
 //counter for number of interrupts occurred
 volatile int InterruptCounter = 0;
-//set current input to no input value
+
 /*
  * configure SysTick to trigger at a period of 48000
  * Since Clock is 48MHz, interrupts occur every 1 ms
@@ -46,14 +46,12 @@ void configure_systick(void)
 void SysTick_Handler(void)
 {
     check_ADC_state(); //check joystick values, see Joystick.c
-    if(InterruptCounter % 5 == 0){ //on every 5th interrupt (5 ms)
+    if(InterruptCounter % 5 == 0)//on every 5th interrupt (5 ms)
+    {
         check_button_state(); //check if button is pressed
         InterruptCounter = 0; //reset InterruptCounter
-
     }
     check_button_state(); //check if button is pressed
-         //check if button is pressed
-
-
     InterruptCounter++;
 }
+// end of file

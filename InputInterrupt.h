@@ -15,11 +15,12 @@ void configure_systick(void);
  * 2 = Joystick Down
  * 3 = Joystick Left
  * 4 = Joystick Right
- * 5 = Button Pressed
- * 6 = Encoder Clockwise
- * 7 = Encoder CounterClockwise
+ * 5 = Encoder Clockwise
+ * 6 = Encoder CounterClockwise
+ * 7 = Button Pressed
  *
 */
 volatile int g_current_input;
 
 #endif /* INPUTINTERRUPT_H_ */
+// end of file
