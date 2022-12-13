@@ -22,7 +22,10 @@
  volatile uint8_t g_led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
 
  /*
-  * Reconfigure the board to all zeros
+  * initialize the game state board and the led board which does:
+  * Reconfigure the game board to all zeros
+  * reconfigure the led board to all zeros
+  * write necessary word and pixels
   */
  void init_board()
  {
@@ -182,14 +185,14 @@
     {
       for (y_offset = 0; y_offset < inner_box_size; y_offset++)
       {
-        // calculate led coords
+        // calculate led coordinates
         uint16_t led_y = y_offset + box_base_y;
         uint16_t led_x = x_offset + box_base_x;
         matrixrgb_write_pixel(led_x, led_y,
                                    color);
       }
     }
-    return 0;
+    return 0;s
  }
 
 /*
@@ -542,7 +545,7 @@ void write_initial_dots()
         uint16_t led_dot_x = (dot_x * (box_size - 1));
         uint16_t led_dot_y = (dot_y * (box_size - 1));
 
-        //color hard set to 1
+        //write the pixel as blue
         matrixrgb_write_pixel(led_dot_x, led_dot_y, BLUE);
   }
 }
