@@ -47,19 +47,19 @@ int g_line_x, g_line_y;
 // who is currently moving
 volatile int current_player_id;
 
-//wheter a line is hovered
+//Whether a line is hovered
 bool hover_line;
 
-//which direction is the line pointing
+//which direction is the line pointing, -1 if uninitialized
 int line_direction;
 
 /*
- * prints player score and the
- * this is needed in the earlier stages of the game
- * to simulate seven segment output
+ * Initialize game state, with zero lines selected and the dot at 0,0
+ *
  */
 
 void init_moves(){
+    // start the game
     g_b_in_game = 1;
 
     //set initial dots
@@ -74,173 +74,159 @@ void init_moves(){
 
     //player 1 goes first
     current_player_id = 0;
-
+    //select initial dot
     select_dot(0, 0);
-
-#define  PRESET_SIZE  20
-    uint16_t preset_x[PRESET_SIZE] = {1,4,5,7,5,8,5,6,2,4,6,2, 1, 0, 1, 4, 8, 8};
-    uint16_t preset_y[PRESET_SIZE] = {2,5,3,2,10,3,2,7,5,9,1,9, 6, 3, 10, 7, 5, 9};
-    int i;
-    for (i = 0; i<PRESET_SIZE; i++)
-    {
-        g_board[preset_x[i]][preset_y[i]] = 1;
-
-              // reflect in led
-        write_led_edge(preset_x[i], preset_y[i], 1);
-    }
-
 }
 
-static void print_score(){
-    printf("Player 1 score: %i, Player 2 Score: %i \n", g_players[0].score, g_players[1].score);
-    printf("Player %i turn \n", current_player_id + 1);
-}
-
-/*
- * gets the console input
- * this function is needed in the earlier stages of the game
- * to simulate input signals on the terminal
- */
-char get_console_input()
-{
-  char move;
-
-  move = getchar();
-
-  //repeat until a valid caracter is grapped
-  while (move == '\n')
-  {
-    move = getchar();
-  }
-  return move;
-}
 
 /*
  * process the inputs given
  * can: move the dots, move the lines, select line
- * TODO: add logic to detect end of game
+ * moves are based on g_current_input which is mapped as the following:
+ * 1: joystick up
+ * 2: joystick down
+ * 3: joystick left
+ * 4: joystick right
+ * 5: encoder clockwise
+ * 6: endocer counter clockwise
+ * 7: button pressed
  */
-void process_move(char move)
+void process_move()
 {
   //boolean for when a player makes a mistake or completes a box
-
-  //TODO: take a snapshot of the
   bool b_can_move_again;
-
-  //take a snapshot
-  enum EncoderState encoder_state_copy = g_encoder_state;
-  enum JoystickState joystick_state_copy = g_joystick_state;
-  enum ButtonState button_pressed_copy = g_button_state;
 
   //reset input state
   g_joystick_state = Zero;
   g_button_state = NotPressed;
   g_encoder_state = Neutral;
 
-  //process joystic input
-  if(!g_b_in_game){
-      if(g_current_input == 7){
+  //check if the game has ended
+  if(!g_b_in_game)
+  {
+      //button pressed, resetting game
+      if(g_current_input == 7)
+      {
           reset_game();
       }
+      //reset inputs
       g_current_input = 0;
       return;
   }
 
-  if(g_current_input == 1)
+  //game has not ended proces moves in order of joystick, encoder, then button
+  if(g_current_input == 1) // joystick up
   {
       clear_message();
-      //printf("JOYSTICK UP");
       move_dot_selection(g_dot_x - 2, g_dot_y);
 
   }
-  else if(g_current_input == 2)
+  else if(g_current_input == 2)// joystick down
   {
       clear_message();
-      //printf("JOYSTICK DOWN");
       move_dot_selection(g_dot_x + 2, g_dot_y);
 
   }
-  else if(g_current_input == 3)
+  else if(g_current_input == 3)// joystick left
   {
       clear_message();
-      //printf("JOYSTICK LEFT");
       move_dot_selection(g_dot_x, g_dot_y - 2);
 
   }
-  else if(g_current_input == 4)
+  else if(g_current_input == 4) // joystick right
   {
       clear_message();
-      //printf("JOYSTICK RIGHT");
       move_dot_selection(g_dot_x, g_dot_y + 2);
 
   }
-  else if(g_current_input == 5)
+  else if(g_current_input == 5) // encoder clockwise
   {
       clear_message();
-      //printf("ENCODER CLOCKWISE");
       move_line_selection(true);
 
-      g_encoder_state = Neutral;
   }
-  else if(g_current_input == 6)
+  else if(g_current_input == 6) // encoder counter clockwise
   {
       clear_message();
-      //printf("ENCODER COUNTERCLOCKWISE");
       move_line_selection(false);
-      g_encoder_state = Neutral;
   }
-  else if(g_current_input == 7)
+  else if(g_current_input == 7) //button pressed
   {
       clear_message();
-      //printf("BUTTON PRESSED");
       b_can_move_again = submit_selected_line();
 
       // change players of no boxes are formed
-      if (!b_can_move_again) {
+      if (!b_can_move_again)
+      {
           current_player_id += 1;
           current_player_id %= 2;
       }
 
       //check if there is any more box left
-      if(g_players[0].score + g_players[1].score >= ROWS * COLUMNS){
+      if(g_players[0].score + g_players[1].score >= ROWS * COLUMNS)
+      {
+          // clear messages to display winner
           clear_bottom();
-          if(g_players[0].score > g_players[1].score)
+
+          if(g_players[0].score > g_players[1].score)//p1 wins
           {
               write_winner(0);
           }
-          else if(g_players[1].score > g_players[0].score)
+          else if(g_players[1].score > g_players[0].score)// p2 wins
           {
               write_winner(1);
           }
-          else
+          else//tie
           {
               write_winner(2);
           }
-          g_b_in_game = 0;
+
+          //indicate end of game
+          end_game();
 
       }
-      else{
+      else{//write player score
           write_player_score(g_players[current_player_id]);
       }
   }
+  // reset input queue
   g_current_input = 0;
   return;
 }
 
-//end game procedure, no more boxes left
-void reset_game(){
+/*
+ * reset the game
+ * which happens after all boxes are filled and the button is pressed
+ * resets player score, boxes, edges, and any counters
+ */
+void reset_game()
+{
+    // clear messages
     clear_bottom();
+
+    // clear led board
     refresh_led_board();
+
+    //reset players
     init_players();
+
+    //clear game board
     init_board();
+
+    //clear move states
     init_moves();
 }
 
-//end game procedure, no more boxes left
-void end_game(){
+/*
+ * end game state when all boxes are filled
+ */
+void end_game()
+{
+    //indicate end of game, halt move processing
     g_b_in_game = 0;
+
+    //add a delay to prevent double press of button
     int i;
-    clear_bottom();
     for(i= 0 ; i < 150; i++){
           refresh_led_board();
       }
@@ -254,24 +240,22 @@ bool submit_selected_line()
   // check if the line is valid
   bool b_can_move_again = false;
 
-  // chech if the line can be selected
-  if (line_direction == -1)
+  // chec if the line can be selected
+  if (line_direction == LINE_NOT_SELECTED)
   {
-      write_error(2);
-    //printf("Cannot select move, no line is selected\n");
+    write_error(2);
     return true;
   }
 
   // check if the move have been selected
-  if (g_board[g_line_x][g_line_y] == 3)
+  if (g_board[g_line_x][g_line_y] == MOVE_SELECTED)
   {
-      write_error(1);
-    //printf("Cannot select a selected move!\n");
+    write_error(1);
     return true;
   }
 
   // select the move in game state
-  g_board[g_line_x][g_line_y] = 3;
+  g_board[g_line_x][g_line_y] = MOVE_SELECTED;
 
   // reflect in led
   write_led_edge(g_line_x, g_line_y, g_board[g_line_x][g_line_y]);
@@ -283,7 +267,7 @@ bool submit_selected_line()
     // check box right
     if (check_box(g_line_x, g_line_y + 1))
     {
-      // update box in game state
+      // update box in game state to the player that claimed the box
       g_board[g_line_x][g_line_y + 1] = g_players[current_player_id].ID;
 
       // update in led
@@ -297,7 +281,7 @@ bool submit_selected_line()
     // check box left
     if (check_box(g_line_x, g_line_y - 1))
     {
-      // update box in game state
+      // update box in game state to the player that claimed the box
       g_board[g_line_x][g_line_y - 1] = g_players[current_player_id].ID;
 
       // update in led
@@ -313,7 +297,7 @@ bool submit_selected_line()
     // check for box below
     if (check_box(g_line_x + 1, g_line_y))
     {
-      // update box in game state
+      // update box in game state to the player that claimed the box
       g_board[g_line_x + 1][g_line_y] = g_players[current_player_id].ID;
 
       // update in led
@@ -327,7 +311,7 @@ bool submit_selected_line()
     // check for box above
     if (check_box(g_line_x - 1, g_line_y))
     {
-      // update box in game state
+      // update box in game state to the player that claimed the box
       g_board[g_line_x - 1][g_line_y] = g_players[current_player_id].ID;
 
       // update in led
@@ -360,15 +344,19 @@ void move_dot_selection(int dot_x, int dot_y)
     return;
   } else {
     // remove current selections
-    if (line_direction != -1)
+    if (line_direction != LINE_NOT_SELECTED)
     {
       unselect_line();
-      line_direction = -1;
+      line_direction = LINE_NOT_SELECTED;
     }
+
+
     unselect_dot();
 
     // move the new selections
     select_dot(dot_x, dot_y);
+
+    //update global position
     g_dot_x = dot_x;
     g_dot_y = dot_y;
   }
@@ -382,7 +370,7 @@ void move_dot_selection(int dot_x, int dot_y)
 void move_line_selection(bool b_is_clockwise)
 {
   // unselect line, if possible
-  if (line_direction != -1)
+  if (line_direction != LINE_NOT_SELECTED)
   {
     unselect_line();
   } else { // if no line is selected, select one first
@@ -419,8 +407,10 @@ void move_line_selection(bool b_is_clockwise)
     new_line_y = g_dot_y + y_change[line_direction];
   } while (!valid_move(new_line_x, new_line_y));
 
-  //seletect the line and set update values
+  //select the line and set update values
   select_line(new_line_x, new_line_y);
+
+  //update global position
   g_line_x = new_line_x;
   g_line_y = new_line_y;
   return;
@@ -431,17 +421,18 @@ void move_line_selection(bool b_is_clockwise)
  */
 bool valid_move(int move_x, int move_y)
 {
-  bool valid = (move_x >= 0) && (move_x < ROWS * 2 + 1) && (move_y >= 0) &&
-               (move_y < COLUMNS * 2 + 1);
+  bool valid = (move_x >= 0) && (move_x < GAME_STATE_ROWS) && (move_y >= 0) &&
+               (move_y < GAME_STATE_COLUMNS);
   return valid;
 }
 
 /*
- * Checks if the box is completed
+ * Checks if the box is completed at a given coordinate
  */
 bool check_box(int box_x, int box_y)
 {
-  if (valid_move(box_x, box_y))
+
+  if (valid_move(box_x, box_y))//check if box is with in bounds
   {
     int count = 0;
     int direction;
@@ -449,12 +440,15 @@ bool check_box(int box_x, int box_y)
     // check that lines in all 4 direction is selected
     for (direction = 0; direction < 4; direction++)
     {
+      //check of an edge is selected
       if (g_board[box_x + x_change[direction]][box_y + y_change[direction]])
-        count++;
+      {
+          count++;
+      }
+
     }
-    if (count == 4)
+    if (count == 4)//all four edge selected, claim the box
     {
-      //printf("!!!!!!!!!!!!!got a box!!!!!!!!!!!!!\n");
       return true;
     }
   }
@@ -468,10 +462,10 @@ bool check_box(int box_x, int box_y)
 void select_dot(int dot_x, int dot_y)
 {
   // reflect game state
-  g_board[dot_x][dot_y] = 1;
+  g_board[dot_x][dot_y] = DOT_SELECTED;
 
   // reflect led
-  write_led_dot(dot_x, dot_y, 1);
+  write_led_dot(dot_x, dot_y, DOT_SELECTED);
 }
 
 /*
@@ -480,10 +474,10 @@ void select_dot(int dot_x, int dot_y)
  */
 void unselect_dot() {
   // reflect game state
-  g_board[g_dot_x][g_dot_y] = 0;
+  g_board[g_dot_x][g_dot_y] = DOT_NOT_SELECTED;
 
   // reflect led
-  write_led_dot(g_dot_x, g_dot_y, 0);
+  write_led_dot(g_dot_x, g_dot_y, DOT_NOT_SELECTED);
 }
 
 /*

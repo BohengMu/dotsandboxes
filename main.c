@@ -28,7 +28,6 @@
  * while loop in main continuously runs ADC conversions
  *
  */
-
 void main(void)
 {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
@@ -62,7 +61,7 @@ void main(void)
         //char move = get_console_input();
 
         // process the current input state
-        process_move('a');
+        process_move();
 
         for(i= 0 ; i < 150; i++){
             refresh_led_board();

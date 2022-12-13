@@ -1,156 +1,90 @@
-
-
-  /*
+/*
    * board.c
    *
    *  Created on: Oct 10, 2022
    *      Author: mub91
    */
 
-  #include "board.h"
-  #include "defines.h"
-  #include <stdint.h>
-  #include <stdio.h>
-  #include <stdlib.h>
+ #include "board.h"
+ #include "defines.h"
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
 
-  //game state board
-  volatile int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
+ //game state board
+ volatile int g_board[ROWS * 2 + 1][COLUMNS * 2 + 1];
 
-  int box_size;
-  int inner_box_size;
+ //define game state board size
+ int box_size;
+ int inner_box_size;
 
-  //led board
-  volatile uint8_t g_led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
+ //led board
+ volatile uint8_t g_led_matrix[LED_MATRIX_SIZE][LED_MATRIX_SIZE];
 
-  //game state prin representations
-  char verticle_edges[4] = {' ', '-', '^', 'x'};
-  char horizontal_edges[4] = {' ', '|', '>', 'x'};
-  char dots[2] = {'.', 'o'};
-  char boxes[3] = {' ', '1', '2'};
+ /*
+  * Reconfigure the board to all zeros
+  */
+ void init_board()
+ {
+     //compute game state size based on rows desired and led size
+     int row_size = ((LED_MATRIX_ROWS-1)/ROWS +1);
+     int column_size = ((LED_MATRIX_COLUMNS-1)/COLUMNS +1);
 
-  /*
-   * Reconfigure the board to all zeros
-   */
-  void init_board()
-  {
-    int row_size = ((LED_MATRIX_ROWS-1)/ROWS +1);
-    int column_size = ((LED_MATRIX_COLUMNS-1)/COLUMNS +1);
-    if (row_size < column_size)
-    {
-        box_size = row_size;
-    }
-    else
-    {
-        box_size = column_size;
-    }
-    inner_box_size = box_size - 2;
-    //set led to all zeros
-    memset(g_led_matrix, 0, LED_MATRIX_ROWS * LED_MATRIX_COLUMNS * sizeof(uint8_t));
+     //compute box_size
+     if (row_size < column_size)
+     {
+         box_size = row_size;
+     }
+     else
+     {
+         box_size = column_size;
+     }
+     inner_box_size = box_size - 2;
 
-    //set game state to zeros
-    int i, j;
-    for (i = 0; i < 2 * ROWS + 1; i++) {
-      for (j = 0; j < 2 * COLUMNS + 1; j++) {
-        g_board[i][j] = 0;
-      }
-    }
+     //set led to all zeros
+     memset(g_led_matrix, 0, LED_MATRIX_ROWS * LED_MATRIX_COLUMNS * sizeof(uint8_t));
 
+     //set all game state to zeros
+     int i, j;
+     for (i = 0; i < 2 * ROWS + 1; i++) {
+         for (j = 0; j < 2 * COLUMNS + 1; j++) {
+             g_board[i][j] = 0;
+         }
+     }
 
+    //write all the game dots
     for(i = 0; i < ROWS + 1; i ++){
         for(j = 0;j< COLUMNS + 1; j ++){
             write_led_dot(i*2, j*2, 0);
         }
     }
+
+    //write the p at the botton
     uint8_t p_matrix[5][3] =
-          {
-           {1, 1, 0},
-           {1, 0, 1},
-           {1, 1, 0},
-           {1, 0, 0},
-           {1, 0, 0},
-          };
-
-          uint16_t x, y;
-          for (x = 27; x < 32; x++){
-              matrixrgb_write_pixel(x, 4, 1);
-              for (y = 0; y < 3; y++){
-                  matrixrgb_write_pixel(x, y, p_matrix[x-27][y]);
-              }
-          }
-          matrixrgb_write_pixel(28, 8, 1);
-          matrixrgb_write_pixel(30, 8, 1);
-          write_digit(10, 0, 1);
-          write_digit(14, 0, 1);
-
-       }
-
-
-  /*
-   * Print the current game state board and the led board
-   * TODO: delete this in the final version as a terminal will not be needed
-   */
-  void print_board()
-  {
-    //printing game state
-    printf("--------------gamestate of size %i x %i--------------\n", ROWS, COLUMNS);
-    int row, column;
-    for (row = 0; row < 2 * ROWS; row += 2)
-    {
-      //print two rows at a time
-      char dotrow[2 * COLUMNS + 2];
-      char boxrow[2 * COLUMNS + 2];
-
-      //add terminal character
-      dotrow[2 * COLUMNS + 1] = '\0';
-      boxrow[2 * COLUMNS + 1] = '\0';
-
-      //prepare the two rows
-      for (column = 0; column < 2 * COLUMNS + 1; column++)
       {
-        //convert dots row to characters
-        dotrow[column] = (column % 2 == 0) ? dots[g_board[row][column]]
-                                           : verticle_edges[g_board[row][column]];
-        //convert boxes row to characters
-        boxrow[column] = (column % 2 == 0)
-                             ? horizontal_edges[g_board[row + 1][column]]
-                             : boxes[g_board[row + 1][column]];
-      }
-
-      //print the two rows
-      printf("%s\n%s\n", dotrow, boxrow);
+       {1, 1, 0},
+       {1, 0, 1},
+       {1, 1, 0},
+       {1, 0, 0},
+       {1, 0, 0},
+      };
+    uint16_t x, y;
+    for (x = 27; x < 32; x++){
+        matrixrgb_write_pixel(x, 4, 1);
+        for (y = 0; y < 3; y++){
+            matrixrgb_write_pixel(x, y, p_matrix[x-27][y]);
+        }
     }
 
-    //set up for the last row
-    char dotrow[2 * COLUMNS + 2];
-    dotrow[2 * COLUMNS + 1] = '\0';
+    //write the semicolon
+    matrixrgb_write_pixel(28, 8, 1);
+    matrixrgb_write_pixel(30, 8, 1);
 
-    // last row
-    for (column = 0; column < 2 * COLUMNS + 1; column++)
-    {
-      dotrow[column] = (column % 2 == 0)
-                           ? dots[g_board[2 * ROWS][column]]
-                           : verticle_edges[g_board[2 * ROWS][column]];
-    }
-    printf("%s\n", dotrow);
+    // write the score to 00 with the color blue
+    write_digit(10, 0, BLUE);
+    write_digit(14, 0, BLUE);
 
-    //printing led representation
-  //  printf("--------------led of size %i x %i--------------\n", LED_MATRIX_SIZE, LED_MATRIX_SIZE);
-  //  int led_row, led_column;
-  //  for(led_row = 0; led_row < LED_MATRIX_SIZE; led_row++)
-  //  {
-  //    char row[LED_MATRIX_SIZE+1];
-  //
-  //    //add terminal character
-  //    row[LED_MATRIX_SIZE] = '\0';
-  //
-  //    // prepare the row
-  //    for (led_column = 0; led_column < LED_MATRIX_SIZE; led_column++){
-  //
-  //      row[led_column] = 48 + led_matrix[led_row][led_column];
-  //    }
-  //    printf("%s\n", row);
-  //  }
-  }
+}
 
   /*
    * a simpulation of Josephs matrixrgb_write_pixel function, it has the same
@@ -186,7 +120,7 @@
     // unselected edge should be off
     if (status == 0)
     {
-      color = 0;
+      color = BLACK;
     }
 
     // determine if edge is horizontal or vertical
@@ -239,7 +173,7 @@
     // unselected box should have no color
     if (status == 0)
     {
-      color = 0;
+      color = BLACK;
     }
 
     // writing the actual pixels
@@ -256,14 +190,14 @@
       }
     }
     return 0;
-  }
+ }
 
-  /*
-   * write the dot onto the led matrix
-   * this is quite simple as dot is just one led
-   */
-  uint8_t write_led_dot(uint16_t x, uint16_t y, uint16_t status)
-  {
+/*
+  * write the dot onto the led matrix
+  * this is quite simple as dot is just one led
+*/
+uint8_t write_led_dot(uint16_t x, uint16_t y, uint16_t status)
+{
     // projecting game x,y into the led matrix coordinates
     uint16_t led_dot_x = (x * (box_size - 1) / 2);
     uint16_t led_dot_y = (y * (box_size - 1) / 2);
@@ -274,60 +208,64 @@
     // writing the actual pixels
     matrixrgb_write_pixel(led_dot_x, led_dot_y, color);
     return 0;
-  }
+ }
 
-  uint8_t write_player_score(struct Player player)
-  {
+uint8_t write_player_score(struct Player player)
+{
+    //write player number
+    if(player.ID == 1){//p1
+        write_digit(4, 1, BLUE);
+    }
+    else{//p2
+        write_digit(4, 2, BLUE);
+    }
 
-      if(player.ID == 1){
-          write_digit(4,1,1);
-      }
-      else{
-          write_digit(4,2,1);
-      }
+    //write 10th digit score
+    if(player.score < 10){//write zero for score less than 10
+        write_digit(10, 0, BLUE);
+    }else //write tenth digit
+    {
+        write_digit(10, player.score /10, BLUE);
+    }
 
-      if(player.score < 10){
-          write_digit(10, 0,1);
-      }else
-      {
-          write_digit(10, player.score /10,1);
+    write_digit(14, player.score % 10, BLUE);
 
-      }
+    return 0;
+}
 
-      write_digit(14, player.score %10,1);
 
-      return 0;
-  }
-
-  uint8_t write_digit(uint16_t start_y, int digit, int color)
-  {
-      uint8_t zero_matrix[5][3] =
-      {
-       {1, 1, 1},
-       {1, 0, 1},
-       {1, 0, 1},
-       {1, 0, 1},
-       {1, 1, 1},
-      };
-      uint8_t one_matrix[5][3] =
-      {
-       {0, 0, 1},
-       {0, 0, 1},
-       {0, 0, 1},
-       {0, 0, 1},
-       {0, 0, 1},
-      };
-
+/*
+ * write the given digit at the starting y and the given color
+ * each digit is converted into a 5x3 matrix to be written
+ * then its passed into a function that actually writes them to the led matrix
+ */
+uint8_t write_digit(uint16_t start_y, int digit, int color)
+{
       switch(digit){
       case 0:
       {
-
-          write_single_digit(start_y ,zero_matrix, color);
+          uint8_t zero_matrix[5][3] =
+              {
+               {1, 1, 1},
+               {1, 0, 1},
+               {1, 0, 1},
+               {1, 0, 1},
+               {1, 1, 1},
+          };
+          write_digit_to_led(start_y ,zero_matrix, color);
           break;
       }
       case 1:
       {
-          write_single_digit(start_y, one_matrix, color);
+          uint8_t one_matrix[5][3] =
+          {
+           {0, 0, 1},
+           {0, 0, 1},
+           {0, 0, 1},
+           {0, 0, 1},
+           {0, 0, 1},
+          };
+          write_digit_to_led(start_y, one_matrix, color);
           break;
       }
       case 2:
@@ -340,7 +278,7 @@
              {1, 0, 0},
              {1, 1, 1},
             };
-          write_single_digit(start_y, two_matrix, color);
+          write_digit_to_led(start_y, two_matrix, color);
 
           break;
       }
@@ -354,7 +292,7 @@
              {0, 0, 1},
              {1, 1, 1},
             };
-          write_single_digit(start_y, three_matrix, color);
+          write_digit_to_led(start_y, three_matrix, color);
           break;
       }
       case 4:
@@ -367,7 +305,7 @@
              {0, 0, 1},
              {0, 0, 1},
             };
-          write_single_digit(start_y, four_matrix, 1);
+          write_digit_to_led(start_y, four_matrix, 1);
           break;
       }
       case 5:
@@ -380,7 +318,7 @@
              {0, 0, 1},
              {1, 1, 1},
             };
-          write_single_digit(start_y, five_matrix, 1);
+          write_digit_to_led(start_y, five_matrix, 1);
           break;
       }
       case 6:
@@ -393,7 +331,7 @@
              {1, 0, 1},
              {1, 1, 1},
             };
-          write_single_digit(start_y, six_matrix, 1);
+          write_digit_to_led(start_y, six_matrix, 1);
           break;
       }
       case 7:
@@ -406,7 +344,7 @@
              {0, 0, 1},
              {0, 0, 1},
             };
-          write_single_digit(start_y, seven_matrix, 1);
+          write_digit_to_led(start_y, seven_matrix, 1);
           break;
       }
       case 8:
@@ -419,7 +357,7 @@
              {1, 0, 1},
              {1, 1, 1},
             };
-          write_single_digit(start_y, eight_matrix, 1);
+          write_digit_to_led(start_y, eight_matrix, 1);
           break;
       }
       case 9:
@@ -432,7 +370,7 @@
              {0, 0, 1},
              {0, 0, 1},
             };
-          write_single_digit(start_y, nine_matrix, 1);
+          write_digit_to_led(start_y, nine_matrix, 1);
           break;
       }
       default:
@@ -445,23 +383,33 @@
                  {0, 0, 0},
                  {0, 0, 0},
                 };
-          write_single_digit(start_y, blank_matrix, 1);
+          write_digit_to_led(start_y, blank_matrix, 1);
 
       }
 
       }
       return 0;
-  }
-void write_single_digit(uint16_t start_y, uint8_t score_matrix[5][3], int color){
+}
+
+/*
+ * write the digit matrix to the led matrix at the given start point
+ */
+
+void write_digit_to_led(uint16_t start_y, uint8_t score_matrix[5][3], int color){
     int x, y;
     for (x = 27; x < 32; x++){
         for (y = start_y; y < start_y+3; y++){
-            matrixrgb_write_pixel(x, y, score_matrix[x-27][y-start_y]*color);
+            matrixrgb_write_pixel(x, y, score_matrix[x-27][y-start_y] * color);
         }
     }
 }
+
+/*
+ * write the the word ER then the error code at the bottom right corner
+ */
 void write_error(int error)
 {
+    // matrix for the letters ER
     uint8_t error_matrix[5][7] =
           {
            {1, 1, 1, 0, 1, 1, 1},
@@ -473,19 +421,25 @@ void write_error(int error)
     int row, col;
     for (col = 27; col < 32; col++){
         for (row = 21; row < 28; row++){
-            matrixrgb_write_pixel(col, row, (error_matrix[col-27][row-21])*4);
+            matrixrgb_write_pixel(col, row, (error_matrix[col-27][row-21]) * RED);
         }
     }
-
-    write_digit(29, error, 4);
+    //write the error code
+    write_digit(29, error, RED);
 
 }
+
+/*
+ * writes the winner of the game at the bottom of the board
+ * takes a custom letter matrix then write it to the led matrix
+ */
 void write_winner(int state)
 {
     switch(state)
     {
-        case 0:
+        case 0://p1 wins
         {
+            // "p1 wins" letter matrix
             uint8_t winner_matrix[5][26] =
                   {
                    {1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1},
@@ -502,8 +456,9 @@ void write_winner(int state)
             }
             break;
         }
-        case 1:
+        case 1://p2 wins
         {
+            //"p2 wins letter matrix"
             uint8_t winner_matrix[5][26] =
                   {
                    {1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1},
@@ -520,7 +475,7 @@ void write_winner(int state)
             }
             break;
         }
-        case 2:
+        case 2://tie
         {
             uint8_t tie_matrix[5][17] =
                   {
@@ -544,15 +499,24 @@ void write_winner(int state)
         }
     }
 }
+
+/*
+ * clear the bottom of the board where the error muscles are displayed
+ * from 21 to end of column
+ */
 void clear_message()
 {
     int row, col;
     for (col = 27; col < 32; col++){
         for (row = 21; row < 32; row++){
-            matrixrgb_write_pixel(col, row, 0);
+            matrixrgb_write_pixel(col, row, BLACK);
         }
     }
 }
+
+/*
+ * clear the entire bottom where both score and error messages are displayed
+ */
 void clear_bottom()
 {
     int row, col;
@@ -563,25 +527,25 @@ void clear_bottom()
     }
 }
 
-  /*
-   * all the dots should be lighted to the dot color 1
-   */
-  void write_initial_dots()
-  {
+/*
+ * all the dots should be lighted to the dot color to blue
+*/
+void write_initial_dots()
+{
     uint16_t dot_x, dot_y;
     //print all the dots there is one more row and column of dots then boxes
     for (dot_x = 0; dot_x < ROWS + 1; dot_x++)
     {
-      for (dot_y = 0; dot_y < COLUMNS + 1; dot_y++)
-      {
+        for (dot_y = 0; dot_y < COLUMNS + 1; dot_y++)
+        {
         // projecting game x,y into the led matrix coordinates
         uint16_t led_dot_x = (dot_x * (box_size - 1));
         uint16_t led_dot_y = (dot_y * (box_size - 1));
 
         //color hard set to 1
-        matrixrgb_write_pixel(led_dot_x, led_dot_y, 1);
-      }
-    }
+        matrixrgb_write_pixel(led_dot_x, led_dot_y, BLUE);
   }
+}
+}
 
-  // end of file
+// end of file
