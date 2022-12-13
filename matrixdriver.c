@@ -164,7 +164,7 @@ void set_rgb_data(uint8_t rgb1, uint8_t rgb2){
 }
 
 /* Refresh board sequence
- * LED Matrix runs off 16 bit multiplexing, so it writes two 16x32 pixel boards
+ * LED Matrix runs off 4 bit multiplexing, so it writes two 16x32 pixel boards
  * at a time, which is defined by first_row and second_row.
  * g_led_matrix stores all the pixel data to write to the board
  */

@@ -12,7 +12,7 @@
 char get_console_input();
 void init_moves();
 
-void process_move(char move);
+void process_move();
 bool submit_selected_line();
 
 void move_dot_selection(int dot_x, int dot_y);
